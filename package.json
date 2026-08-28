@@ -1,0 +1,17 @@
+{
+  "name": "gym-website-appinteractivas2c2026",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^8.24.4",
+    "nodemon": "^3.1.14"
+  }
+}
