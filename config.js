@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 
-const dbURL = 'mongodb+srv://alvalenteuade_db_user:Password01@cluster0.qkuw4vx.mongodb.net/GymDB';
+const dbURL = process.env.MONGODB_URI;
 
 const connectDB = async () => {
     try {
+        if (!dbURL) {
+            throw new Error('MONGODB_URI no está configurada');
+        }
         await mongoose.connect(dbURL);
         console.log('¡Conectado exitosamente a MongoDB!');
     } catch (error) {
