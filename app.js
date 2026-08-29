@@ -1,6 +1,8 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
-const connectDB = require('./config'); 
+const connectDB = require('./config');
 
 // IMPORTAMOS LA NUEVA RUTA ACÁ:
 const institutionRouter = require('./routes/institution.route'); 
