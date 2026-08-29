@@ -12,16 +12,18 @@ const app = express();
 app.use(cors());
 app.use(express.json()); 
 
-connectDB();
+(async () => {
+    await connectDB();
 
-app.get('/', (req, res) => {
-    res.send('¡API del Gimnasio funcionando correctamente!');
-});
+    app.get('/', (req, res) => {
+        res.send('¡API del Gimnasio funcionando correctamente!');
+    });
 
-// LE DECIMOS A EXPRESS QUE LA USE ACÁ:
-app.use('/api/institution', institutionRouter); 
+    // LE DECIMOS A EXPRESS QUE LA USE ACÁ:
+    app.use('/api/institution', institutionRouter);
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+    const PORT = process.env.PORT || 4000;
+    app.listen(PORT, () => {
+        console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    });
+})();
