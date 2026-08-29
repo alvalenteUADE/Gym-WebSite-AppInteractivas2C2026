@@ -6,7 +6,7 @@ exports.crearInstitucion = async function (data) {
         const institucionGuardada = await nuevaInstitucion.save();
         return institucionGuardada;
     } catch (e) {
-        console.log("Error en el servicio de Institution:", e);
-        throw Error('Error al guardar la información institucional en la base de datos');
+        console.error('Error en el servicio de Institution:', e);
+        throw new Error('Error al guardar la información institucional en la base de datos');
     }
 }
