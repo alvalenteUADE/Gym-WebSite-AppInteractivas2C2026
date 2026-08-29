@@ -4,14 +4,31 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alvalenteUADE/Gym-WebSite-AppInteractivas2C2026.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/alvalenteUADE/Gym-WebSite-AppInteractivas2C2026/issues"
+  },
+  "homepage": "https://github.com/alvalenteUADE/Gym-WebSite-AppInteractivas2C2026#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mongoose": "^8.24.4",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.9.4"
+  },
+  "devDependencies": {
     "nodemon": "^3.1.14"
   }
 }
