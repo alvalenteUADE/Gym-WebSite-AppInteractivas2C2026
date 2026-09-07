@@ -6,7 +6,8 @@ const connectDB = require('./config');
 
 // IMPORTAMOS LAS NUEVAS RUTAS ACÁ:
 const institutionRouter = require('./routes/institution.route');
-const userRouter = require('./routes/api/user.route'); 
+const userRouter = require('./routes/api/user.route');
+const categoryRouter = require('./routes/category.route');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.json());
     // LE DECIMOS A EXPRESS QUE LAS USE ACÁ:
     app.use('/api/institution', institutionRouter);
     app.use('/api/user', userRouter);
+    app.use('/api/category', categoryRouter);
 
     const PORT = process.env.PORT || 4000;
     app.listen(PORT, () => {
