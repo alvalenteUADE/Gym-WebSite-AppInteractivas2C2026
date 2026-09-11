@@ -51,7 +51,7 @@ exports.registrarAdmin = async function (data) {
         console.error('Error en el servicio de User:', e);
         throw new Error('Error al registrar el administrador en la base de datos');
     }
-}
+};
 
 exports.loginAdmin = async function (correo, password) {
     try {
@@ -80,7 +80,7 @@ exports.loginAdmin = async function (correo, password) {
         console.error('Error en el servicio de User:', e);
         throw new Error('Error al iniciar sesión del administrador');
     }
-}
+};
 
 exports.cerrarSesion = async function (token, decoded) {
     try {
@@ -98,7 +98,7 @@ exports.cerrarSesion = async function (token, decoded) {
         console.error('Error en el servicio de User al cerrar sesión:', e);
         throw new Error('Error al cerrar la sesión del administrador');
     }
-}
+};
 
 exports.solicitarRecuperacionPassword = async function (correo) {
     try {
@@ -133,7 +133,7 @@ exports.solicitarRecuperacionPassword = async function (correo) {
         console.error('Error en el servicio de User al solicitar recuperación:', e);
         throw new Error('Error al solicitar la recuperación de contraseña');
     }
-}
+};
 
 exports.restablecerPassword = async function (token, nuevaPassword) {
     try {
@@ -164,4 +164,58 @@ exports.restablecerPassword = async function (token, nuevaPassword) {
         console.error('Error en el servicio de User al restablecer contraseña:', e);
         throw new Error('Error al restablecer la contraseña');
     }
-}
+};
+
+exports.modificarAdmin = async function (id, datosActualizados) {
+    try {
+        if (!datosActualizados || Object.keys(datosActualizados).length === 0) {
+            throw new Error('No se enviaron datos para actualizar');
+        }
+
+        // Se filtran los campos permitidos
+        const { nombre, apellido, correo, telefono } = datosActualizados;
+        const actualizacion = {};
+
+        if (nombre !== undefined) actualizacion.nombre = nombre;
+        if (apellido !== undefined) actualizacion.apellido = apellido;
+        if (telefono !== undefined) actualizacion.telefono = telefono;
+
+        if (correo !== undefined) {
+            const correoNormalizado = correo.toLowerCase().trim();
+
+            const existeCorreo = await User.findOne({ 
+                correo: correoNormalizado, 
+                _id: { $ne: id } 
+            });
+
+            if (existeCorreo) {
+                throw new Error('El correo electrónico ya está en uso por otro administrador.');
+            }
+
+            actualizacion.correo = correoNormalizado;
+        }
+
+        if (Object.keys(actualizacion).length === 0) {
+            throw new Error('No se enviaron campos válidos para actualizar');
+        }
+
+        // Actualizamos con $set y devolvemos el usuario sin la contraseña
+        const adminModificado = await User.findByIdAndUpdate(
+            id,
+            { $set: actualizacion },
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!adminModificado) {
+            throw new Error('No se encontró el administrador con ese ID');
+        }
+
+        return adminModificado;
+    } catch (e) {
+        if (e.code === 11000) {
+            throw new Error('El correo electrónico ya está en uso por otro administrador.');
+        }
+        console.error('Error en el servicio de User al modificar:', e);
+        throw e;
+    }
+};
