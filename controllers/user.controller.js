@@ -124,12 +124,12 @@ exports.restablecerPassword = async function (req, res) {
 
 exports.modificarAdmin = async function (req, res) {
     try {
-        const id = (req.usuario && req.usuario.id) || req.params.id;
+        const id = req.usuario && req.usuario.id;
 
         if (!id) {
-            return res.status(400).json({
-                status: 400,
-                message: "No se proporcionó un ID de administrador válido."
+            return res.status(401).json({
+                status: 401,
+                message: "No autorizado. Token inválido o ausente."
             });
         }
 
