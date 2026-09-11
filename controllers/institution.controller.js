@@ -27,3 +27,26 @@ exports.crearInstitucion = async function (req, res) {
         });
     }
 }
+
+exports.modificarInstitucion = async function (req, res) {
+    try {
+        // Sacamos el ID de los parámetros de la URL
+        const { id } = req.params;
+        const datosAActualizar = req.body;
+
+        const institucionModificada = await InstitutionService.modificarInstitucion(id, datosAActualizar);
+
+        console.log(`¡Éxito! Se modificaron los datos de la institución: ${institucionModificada.nombre}`);
+
+        return res.status(200).json({
+            status: 200,
+            data: institucionModificada,
+            message: "Información institucional modificada exitosamente"
+        });
+    } catch (e) {
+        return res.status(400).json({ 
+            status: 400, 
+            message: e.message 
+        });
+    }
+}
