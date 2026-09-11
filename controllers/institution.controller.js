@@ -2,7 +2,7 @@ const InstitutionService = require('../services/institution.service');
 
 exports.crearInstitucion = async function (req, res) {
     const { nombre, descripcion, direccion, telefono, redes_sociales, horarios_atencion } = req.body;
-    //validación de campos requeridos
+    // Validación de campos requeridos
     if (!nombre || !direccion || !telefono || !horarios_atencion) {
         return res.status(400).json({
             status: 400,
@@ -26,4 +26,36 @@ exports.crearInstitucion = async function (req, res) {
             message: e.message 
         });
     }
-}
+};
+
+exports.modificarInstitucion = async function (req, res) {
+    try {
+        //Sacamos el ID de los parametros de la URL
+        const { id } = req.params;
+        const datosAActualizar = req.body;
+
+        const institucionModificada = await InstitutionService.modificarInstitucion(id, datosAActualizar);
+
+        console.log(`¡Éxito! Se modificaron los datos de la institución: ${institucionModificada.nombre}`);
+
+        return res.status(200).json({
+            status: 200,
+            data: institucionModificada,
+            message: "Información institucional modificada exitosamente"
+        });
+    } catch (e) {
+        // Si el recurso no existe en la BD devolvemos 404 Not Found
+        if (e.message === 'No se encontró la institución con ese ID') {
+            return res.status(404).json({
+                status: 404,
+                message: e.message
+            });
+        }
+
+        // Para errores de validación devolvemos 400 Bad Request
+        return res.status(400).json({ 
+            status: 400, 
+            message: e.message 
+        });
+    }
+};
