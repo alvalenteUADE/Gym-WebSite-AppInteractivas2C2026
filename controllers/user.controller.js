@@ -55,3 +55,69 @@ exports.loginAdmin = async function (req, res) {
         });
     }
 }
+
+exports.cerrarSesionAdmin = async function (req, res) {
+    try {
+        await UserService.cerrarSesion(req.token, req.usuario);
+
+        return res.status(200).json({
+            status: 200,
+            message: "Sesión cerrada exitosamente"
+        });
+    } catch (e) {
+        return res.status(400).json({
+            status: 400,
+            message: e.message
+        });
+    }
+}
+
+exports.solicitarRecuperacionPassword = async function (req, res) {
+    const { correo } = req.body;
+
+    if (!correo) {
+        return res.status(400).json({
+            status: 400,
+            message: "Faltan campos requeridos. Asegúrese de enviar correo."
+        });
+    }
+
+    try {
+        await UserService.solicitarRecuperacionPassword(correo);
+
+        return res.status(200).json({
+            status: 200,
+            message: "Si el correo está registrado, se enviará un enlace de recuperación."
+        });
+    } catch (e) {
+        return res.status(400).json({
+            status: 400,
+            message: e.message
+        });
+    }
+}
+
+exports.restablecerPassword = async function (req, res) {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+        return res.status(400).json({
+            status: 400,
+            message: "Faltan campos requeridos. Asegúrese de enviar token y password."
+        });
+    }
+
+    try {
+        await UserService.restablecerPassword(token, password);
+
+        return res.status(200).json({
+            status: 200,
+            message: "Contraseña restablecida exitosamente"
+        });
+    } catch (e) {
+        return res.status(400).json({
+            status: 400,
+            message: e.message
+        });
+    }
+}
