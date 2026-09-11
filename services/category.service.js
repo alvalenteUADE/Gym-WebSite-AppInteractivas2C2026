@@ -12,7 +12,7 @@ exports.crearCategoria = async function (data, adminId) {
 
         // Validación case-insensitive para evitar duplicados
         const existeCategoria = await Category.findOne({
-            nombre: { $regex: new RegExp(`^${nombreNormalizado}$`, 'i') }
+            nombre: { $regex: new RegExp(`^${nombreNormalizado.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
         });
 
         if (existeCategoria) {
