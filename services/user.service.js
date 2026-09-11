@@ -111,21 +111,21 @@ exports.solicitarRecuperacionPassword = async function (correo) {
             return;
         }
 
-        const tokenRecuperacion = crypto.randomBytes(32).toString('hex');
-        const minutosExpiracion = parseInt(process.env.RESET_TOKEN_EXPIRATION_MIN, 10) || 60;
+        const tokenRecuperacion = crypto.randomBytes(4).toString('hex');
+        const minutosExpiracion = parseInt(process.env.RESET_TOKEN_EXPIRATION_MIN, 10) || 15;
 
         admin.resetPasswordToken = tokenRecuperacion;
-        admin.resetPasswordExpires = new Date(Date.now() + minutosExpiracion * 60 * 1000);
+        admin.resetPasswordExpires = new Date(Date.now() + minutosExpiracion * 15 * 1000);
         await admin.save();
 
         const baseUrl = process.env.FRONTEND_URL || 'http://localhost:4000';
-        const linkRecuperacion = `${baseUrl}/reset-password?token=${tokenRecuperacion}`;
+        const linkRecuperacion = `${tokenRecuperacion}`;
 
         // Por ahora el "envío" se loguea en consola. Reemplazar por SMTP cuando se requiera.
         console.log(`==========================================`);
-        console.log(`[RECUPERACIÓN DE CONTRASEÑA] Para: ${admin.correo}`);
+        console.log(`[RECUPERACIÓN DE CONTRASEÑA] \nPara: ${admin.correo}`);
         console.log(`Enlace de recuperación (válido por ${minutosExpiracion} minutos):`);
-        console.log(linkRecuperacion);
+        console.log("Token:", linkRecuperacion);
         console.log(`==========================================`);
 
         return;
