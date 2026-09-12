@@ -181,10 +181,6 @@ exports.modificarAdmin = async function (id, datosActualizados) {
         if (telefono !== undefined) actualizacion.telefono = telefono;
 
         if (correo !== undefined) {
-            if (typeof correo !== 'string' || !correo.trim()) {
-                throw new Error('El correo electrónico debe ser una cadena de texto válida.');
-            }
-
             const correoNormalizado = correo.toLowerCase().trim();
 
             const existeCorreo = await User.findOne({ 
