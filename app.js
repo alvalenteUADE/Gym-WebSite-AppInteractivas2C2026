@@ -7,12 +7,18 @@ const connectDB = require('./config');
 // IMPORTAMOS LAS NUEVAS RUTAS ACÁ:
 const institutionRouter = require('./routes/institution.route');
 const userRouter = require('./routes/api/user.route');
+
 const consultaRouter = require('./routes/consulta.route'); 
+
+const categoryRouter = require('./routes/category.route');
+const publicacionRouter = require('./routes/publicacion.route');
+
 
 const app = express();
 
 app.use(cors());
-app.use(express.json()); 
+// Límite ampliado para permitir imágenes en base64 dentro del JSON
+app.use(express.json({ limit: '10mb' }));
 
 (async () => {
     await connectDB();
@@ -24,7 +30,12 @@ app.use(express.json());
     // LE DECIMOS A EXPRESS QUE LAS USE ACÁ:
     app.use('/api/institution', institutionRouter);
     app.use('/api/user', userRouter);
+
     app.use('/api/consulta', consultaRouter);
+
+    app.use('/api/category', categoryRouter);
+    app.use('/api/publicacion', publicacionRouter);
+
 
     const PORT = process.env.PORT || 4000;
     app.listen(PORT, () => {
