@@ -1,0 +1,616 @@
+{
+  "info": {
+    "name": "Gym API - AppInteractivas 2C2026",
+    "description": "Colección de la API del gimnasio. Ejecutar las carpetas en orden: 1 → 2 → 3 → 4 → 5.\n\nLas variables `token`, `userId`, `institutionId`, `categoryId` y `publicacionId` se completan automáticamente con los scripts de test de cada request.\n\nPara `Reset password` copiar el token que imprime la consola del servidor en la variable `resetToken`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000" },
+    { "key": "adminEmail", "value": "admin@gymfitness.com" },
+    { "key": "adminPassword", "value": "Admin1234" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "institutionId", "value": "" },
+    { "key": "categoryId", "value": "" },
+    { "key": "publicacionId", "value": "" },
+    { "key": "resetToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "0. Health",
+      "item": [
+        {
+          "name": "API funcionando",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "1. Usuario (Admin)",
+      "item": [
+        {
+          "name": "Registrar admin",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Alejandro\",\n  \"apellido\": \"Valente\",\n  \"correo\": \"{{adminEmail}}\",\n  \"telefono\": \"1155551234\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/user/register", "host": ["{{baseUrl}}"], "path": ["api", "user", "register"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 201 si es nuevo, 400 si el correo ya existe (en ese caso usar Login)",
+                  "pm.test('Status 201 o 400 (ya registrado)', () => pm.expect([201, 400]).to.include(pm.response.code));",
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json().data;",
+                  "  pm.collectionVariables.set('token', data.token);",
+                  "  pm.collectionVariables.set('userId', data.usuario._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login admin",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/user/login", "host": ["{{baseUrl}}"], "path": ["api", "user", "login"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('token', data.token);",
+                  "pm.collectionVariables.set('userId', data.usuario._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Modificar perfil (/profile)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Alejandro Martín\",\n  \"telefono\": \"1166667890\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/user/profile", "host": ["{{baseUrl}}"], "path": ["api", "user", "profile"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Modificar perfil (/:id)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"apellido\": \"Valente Pérez\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/user/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "user", "{{userId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Forgot password",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{adminEmail}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/user/forgot-password", "host": ["{{baseUrl}}"], "path": ["api", "user", "forgot-password"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "console.log('El token de recuperación se imprime en la consola del servidor. Copiarlo en la variable resetToken.');"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reset password",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/user/reset-password", "host": ["{{baseUrl}}"], "path": ["api", "user", "reset-password"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Institución",
+      "item": [
+        {
+          "name": "Crear institución",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Fitness Gym\",\n  \"descripcion\": \"Gimnasio con equipamiento de última generación, clases grupales y entrenadores personales.\",\n  \"direccion\": \"Av. Corrientes 1234, CABA\",\n  \"telefono\": \"011-4555-1234\",\n  \"redes_sociales\": \"Instagram: @fitnessgym | Facebook: /fitnessgym\",\n  \"horarios_atencion\": \"Lunes a Viernes 7:00 a 23:00 - Sábados 9:00 a 20:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/institution/create", "host": ["{{baseUrl}}"], "path": ["api", "institution", "create"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('institutionId', pm.response.json().data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Modificar institución",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"011-4555-9999\",\n  \"horarios_atencion\": \"Lunes a Viernes 6:00 a 23:00 - Sábados y Domingos 9:00 a 18:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/institution/{{institutionId}}", "host": ["{{baseUrl}}"], "path": ["api", "institution", "{{institutionId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Categorías",
+      "item": [
+        {
+          "name": "Crear categoría",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Clases grupales\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/category/create", "host": ["{{baseUrl}}"], "path": ["api", "category", "create"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('categoryId', pm.response.json().data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear categoría (duplicada → 409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Clases grupales\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/category/create", "host": ["{{baseUrl}}"], "path": ["api", "category", "create"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 409', () => pm.response.to.have.status(409));"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar categorías (público)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/category", "host": ["{{baseUrl}}"], "path": ["api", "category"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Devuelve un array', () => pm.expect(pm.response.json().data).to.be.an('array'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Modificar categoría",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Clases grupales y funcional\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/category/{{categoryId}}", "host": ["{{baseUrl}}"], "path": ["api", "category", "{{categoryId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar categoría (en uso → 409)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/category/{{categoryId}}", "host": ["{{baseUrl}}"], "path": ["api", "category", "{{categoryId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Si ya se creó una publicación con esta categoría responde 409; si no, 200",
+                  "pm.test('Status 409 (en uso) o 200', () => pm.expect([200, 409]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Publicaciones",
+      "item": [
+        {
+          "name": "Crear publicación",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Clase de Spinning\",\n  \"descripcion\": \"Clase grupal de 45 minutos de alta intensidad sobre bicicleta fija. Ideal para quemar calorías y mejorar la resistencia cardiovascular.\",\n  \"categoria\": \"{{categoryId}}\",\n  \"imagenes\": [\n    \"https://images.unsplash.com/photo-1534438327276-14e5300c3a48\",\n    \"https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b\"\n  ],\n  \"precio\": 8500,\n  \"disponible\": true,\n  \"destacada\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/publicacion/create", "host": ["{{baseUrl}}"], "path": ["api", "publicacion", "create"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('publicacionId', pm.response.json().data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear publicación sin precio (servicio)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Evaluación física inicial\",\n  \"descripcion\": \"Evaluación gratuita de composición corporal y nivel de condición física para nuevos socios.\",\n  \"categoria\": \"{{categoryId}}\",\n  \"imagenes\": [\"https://images.unsplash.com/photo-1517836357463-d25dfeac3438\"],\n  \"disponible\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/publicacion/create", "host": ["{{baseUrl}}"], "path": ["api", "publicacion", "create"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 201', () => pm.response.to.have.status(201));"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear publicación (precio inválido → 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Publicación inválida\",\n  \"descripcion\": \"Debe fallar por precio negativo.\",\n  \"categoria\": \"{{categoryId}}\",\n  \"precio\": -100\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/publicacion/create", "host": ["{{baseUrl}}"], "path": ["api", "publicacion", "create"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar publicaciones (público)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/publicacion", "host": ["{{baseUrl}}"], "path": ["api", "publicacion"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Devuelve un array', () => pm.expect(pm.response.json().data).to.be.an('array'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener publicación por ID (público)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/publicacion/{{publicacionId}}", "host": ["{{baseUrl}}"], "path": ["api", "publicacion", "{{publicacionId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Categoría populada', () => pm.expect(pm.response.json().data.categoria).to.have.property('nombre'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Modificar publicación",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precio\": 9200,\n  \"disponible\": false,\n  \"descripcion\": \"Clase grupal de 45 minutos de alta intensidad. Cupo completo para este mes.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/publicacion/{{publicacionId}}", "host": ["{{baseUrl}}"], "path": ["api", "publicacion", "{{publicacionId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Desactivar publicación",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activa\": false\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/publicacion/{{publicacionId}}/estado", "host": ["{{baseUrl}}"], "path": ["api", "publicacion", "{{publicacionId}}", "estado"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('activa = false', () => pm.expect(pm.response.json().data.activa).to.eql(false));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Activar publicación",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activa\": true\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/publicacion/{{publicacionId}}/estado", "host": ["{{baseUrl}}"], "path": ["api", "publicacion", "{{publicacionId}}", "estado"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('activa = true', () => pm.expect(pm.response.json().data.activa).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar publicación",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/publicacion/{{publicacionId}}", "host": ["{{baseUrl}}"], "path": ["api", "publicacion", "{{publicacionId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener publicación eliminada (→ 404)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/publicacion/{{publicacionId}}", "host": ["{{baseUrl}}"], "path": ["api", "publicacion", "{{publicacionId}}"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 404', () => pm.response.to.have.status(404));"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Cierre de sesión",
+      "item": [
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/user/logout", "host": ["{{baseUrl}}"], "path": ["api", "user", "logout"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Request con token revocado (→ 401)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"No debería crearse\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/category/create", "host": ["{{baseUrl}}"], "path": ["api", "category", "create"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status 401', () => pm.response.to.have.status(401));"]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
