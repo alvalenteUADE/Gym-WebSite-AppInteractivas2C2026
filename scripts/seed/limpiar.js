@@ -12,15 +12,16 @@
 const mongoose = require('mongoose');
 
 const User = require('../../models/User.model');
+const Institution = require('../../models/Institution.model');
 const Category = require('../../models/Category.model');
 const Publicacion = require('../../models/Publicacion.model');
 const TokenBlacklist = require('../../models/TokenBlacklist.model');
 
 // Colecciones que se vacían en cada corrida del seed.
-// Institution queda fuera a propósito: el seed no la recrea.
 const COLECCIONES_A_LIMPIAR = [
     Publicacion,
     Category,
+    Institution,
     User,
     TokenBlacklist
 ];

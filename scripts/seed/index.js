@@ -13,6 +13,7 @@
 //
 // Para agregar datos de prueba editar los archivos en ./data:
 //   data/usuarios.js       -> administradores
+//   data/institucion.js    -> información del comercio
 //   data/categorias.js     -> categorías
 //   data/publicaciones.js  -> productos y servicios
 // ============================================================
@@ -22,6 +23,7 @@ require('dotenv').config();
 const api = require('./api');
 const limpiarBaseDeDatos = require('./limpiar');
 const usuarios = require('./data/usuarios');
+const institucion = require('./data/institucion');
 const categorias = require('./data/categorias');
 const publicaciones = require('./data/publicaciones');
 
@@ -79,7 +81,22 @@ async function cargarUsuarios() {
 }
 
 // ============================================================
-// PASO 3: categorías
+// PASO 3: información institucional
+// ============================================================
+async function cargarInstitucion(token) {
+    log.titulo('Información institucional');
+
+    const respuesta = await api.post('/api/institution/create', institucion, { token });
+
+    if (respuesta.status === 201) {
+        log.ok(`Creada: ${institucion.nombre}`);
+    } else {
+        log.error(`${institucion.nombre}: ${respuesta.body?.message || respuesta.status}`);
+    }
+}
+
+// ============================================================
+// PASO 4: categorías
 // Devuelve un mapa { nombre -> _id } para asociar publicaciones.
 // ============================================================
 async function cargarCategorias(token) {
@@ -101,7 +118,7 @@ async function cargarCategorias(token) {
 }
 
 // ============================================================
-// PASO 4: publicaciones (productos y servicios)
+// PASO 5: publicaciones (productos y servicios)
 // ============================================================
 async function cargarPublicaciones(token, categoriasPorNombre) {
     log.titulo(`Publicaciones (${publicaciones.length})`);
@@ -137,6 +154,7 @@ async function cargarPublicaciones(token, categoriasPorNombre) {
         await verificarApi();
         await limpiar();
         const token = await cargarUsuarios();
+        await cargarInstitucion(token);
         const categoriasPorNombre = await cargarCategorias(token);
         await cargarPublicaciones(token, categoriasPorNombre);
 
