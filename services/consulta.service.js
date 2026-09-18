@@ -50,3 +50,21 @@ exports.modificarEstado = async function (id, nuevoEstado) {
         throw new Error('Error al modificar el estado de la consulta');
     }
 };
+
+exports.eliminarConsulta = async function (id) {
+    try {
+        const consultaEliminada = await Consulta.findByIdAndDelete(id);
+
+        if (!consultaEliminada) {
+            throw new Error('No se encontró la consulta con ese ID.');
+        }
+
+        return consultaEliminada;
+    } catch (e) {
+        if (e.message === 'No se encontró la consulta con ese ID.') {
+            throw e;
+        }
+        console.error('Error en el servicio de Consulta al eliminar:', e);
+        throw new Error('Error al eliminar la consulta');
+    }
+};
