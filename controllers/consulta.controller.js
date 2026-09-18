@@ -1,12 +1,29 @@
 const ConsultaService = require('../services/consulta.service');
 
+// Formato de correo electrónico razonable (usuario@dominio.tld)
+const REGEX_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Traduce los mensajes de error del servicio al código HTTP correspondiente
+const responderError = (res, e) => {
+    return res.status(400).json({ status: 400, message: e.message });
+};
+
 exports.crearConsulta = async function (req, res) {
     const { nombre, correo, telefono, asunto, mensaje } = req.body;
 
+    // Validación de campos obligatorios (el teléfono es opcional)
     if (!nombre || !correo || !asunto || !mensaje) {
         return res.status(400).json({
             status: 400,
             message: "Faltan campos requeridos. Asegúrese de enviar nombre, correo, asunto y mensaje."
+        });
+    }
+
+    // Validación de formato de correo electrónico
+    if (typeof correo !== 'string' || !REGEX_CORREO.test(correo.trim())) {
+        return res.status(400).json({
+            status: 400,
+            message: "El correo electrónico no tiene un formato válido."
         });
     }
 
@@ -21,10 +38,21 @@ exports.crearConsulta = async function (req, res) {
             message: "Consulta enviada exitosamente"
         });
     } catch (e) {
-        return res.status(400).json({
-            status: 400,
-            message: e.message
+        return responderError(res, e);
+    }
+};
+
+exports.listarConsultas = async function (req, res) {
+    try {
+        const consultas = await ConsultaService.listarConsultas();
+
+        return res.status(200).json({
+            status: 200,
+            data: consultas,
+            message: "Consultas obtenidas exitosamente"
         });
+    } catch (e) {
+        return responderError(res, e);
     }
 };
 
