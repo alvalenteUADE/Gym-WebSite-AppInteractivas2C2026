@@ -61,3 +61,28 @@ exports.modificarEstado = async function (req, res) {
         });
     }
 };
+
+exports.eliminarConsulta = async function (req, res) {
+    const { id } = req.params;
+
+    try {
+        await ConsultaService.eliminarConsulta(id);
+        
+        return res.status(200).json({
+            status: 200,
+            message: "Consulta eliminada exitosamente."
+        });
+    } catch (e) {
+        if (e.message === 'No se encontró la consulta con ese ID.') {
+            return res.status(404).json({
+                status: 404,
+                message: e.message
+            });
+        }
+        
+        return res.status(400).json({
+            status: 400,
+            message: e.message
+        });
+    }
+};

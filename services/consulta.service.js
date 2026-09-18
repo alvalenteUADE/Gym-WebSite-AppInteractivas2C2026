@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Consulta = require('../models/Consulta.model');
 
 exports.crearConsulta = async function (data) {
@@ -48,5 +49,28 @@ exports.modificarEstado = async function (id, nuevoEstado) {
         }
         console.error('Error en el servicio de Consulta al modificar estado:', e);
         throw new Error('Error al modificar el estado de la consulta');
+    }
+};
+
+exports.eliminarConsulta = async function (id) {
+    // Validar que el ID tenga formato válido de MongoDB para evitar CastError
+    if (!mongoose.isValidObjectId(id)) {
+        throw new Error('No se encontró la consulta con ese ID.');
+    }
+
+    try {
+        const consultaEliminada = await Consulta.findByIdAndDelete(id);
+
+        if (!consultaEliminada) {
+            throw new Error('No se encontró la consulta con ese ID.');
+        }
+
+        return consultaEliminada;
+    } catch (e) {
+        if (e.message === 'No se encontró la consulta con ese ID.') {
+            throw e;
+        }
+        console.error('Error en el servicio de Consulta al eliminar:', e);
+        throw new Error('Error al eliminar la consulta');
     }
 };
