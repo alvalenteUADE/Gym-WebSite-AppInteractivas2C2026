@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Consulta = require('../models/Consulta.model');
+const EmailService = require('./email.service');
 
 exports.crearConsulta = async function (data) {
     try {
@@ -15,10 +16,28 @@ exports.crearConsulta = async function (data) {
         });
 
         const consultaGuardada = await nuevaConsulta.save();
+
+        // El envío del correo no debe bloquear el guardado: si falla se loguea
+        // el error y la consulta igual queda registrada en la base de datos.
+        try {
+            await EmailService.enviarCorreoConsulta(consultaGuardada);
+        } catch (errorCorreo) {
+            console.error('Error al enviar el correo de la consulta:', errorCorreo);
+        }
+
         return consultaGuardada;
     } catch (e) {
         console.error('Error en el servicio de Consulta al crear:', e);
         throw new Error('Error al guardar la consulta en la base de datos');
+    }
+};
+
+exports.listarConsultas = async function () {
+    try {
+        return await Consulta.find().sort({ createdAt: -1 });
+    } catch (e) {
+        console.error('Error en el servicio de Consulta al listar:', e);
+        throw new Error('Error al obtener las consultas de la base de datos');
     }
 };
 

@@ -6,6 +6,9 @@ const authMiddleware = require('../middlewares/auth.middleware');
 // Enviar una consulta de contacto (público, sin autenticación)
 router.post('/create', ConsultaController.crearConsulta);
 
+// Listar las consultas recibidas (solo administradores autenticados)
+router.get('/', authMiddleware, ConsultaController.listarConsultas);
+
 // Modificar el estado de una consulta (protegido para administradores)
 router.put('/:id/estado', authMiddleware, ConsultaController.modificarEstado);
 
