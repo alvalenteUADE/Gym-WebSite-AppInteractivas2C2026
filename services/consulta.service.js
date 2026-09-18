@@ -22,11 +22,11 @@ exports.crearConsulta = async function (data) {
 };
 
 exports.modificarEstado = async function (id, nuevoEstado) {
-    // Validación contra los estados permitidos
-    const estadosValidos = ['Pendiente', 'Leída', 'Respondida'];
+    // Obtenemos los estados válidos directamente del esquema de Mongoose
+    const estadosValidos = Consulta.schema.path('estado').enumValues;
     
     if (!estadosValidos.includes(nuevoEstado)) {
-        throw new Error('Estado inválido. Los estados permitidos son: Pendiente, Leída, Respondida.');
+        throw new Error(`Estado inválido. Los estados permitidos son: ${estadosValidos.join(', ')}.`);
     }
 
     try {
