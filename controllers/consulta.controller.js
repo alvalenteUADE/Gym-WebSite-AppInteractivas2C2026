@@ -27,3 +27,37 @@ exports.crearConsulta = async function (req, res) {
         });
     }
 };
+
+exports.modificarEstado = async function (req, res) {
+    const { id } = req.params;
+    const { estado } = req.body;
+
+    if (!estado) {
+        return res.status(400).json({
+            status: 400,
+            message: "Falta el campo 'estado' en el cuerpo de la petición."
+        });
+    }
+
+    try {
+        const resultado = await ConsultaService.modificarEstado(id, estado);
+        
+        return res.status(200).json({
+            status: 200,
+            data: resultado,
+            message: "Estado de la consulta actualizado exitosamente."
+        });
+    } catch (e) {
+        if (e.message === 'No se encontró la consulta con ese ID.') {
+            return res.status(404).json({
+                status: 404,
+                message: e.message
+            });
+        }
+        
+        return res.status(400).json({
+            status: 400,
+            message: e.message
+        });
+    }
+};

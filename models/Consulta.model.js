@@ -22,11 +22,15 @@ const ConsultaSchema = new mongoose.Schema({
     mensaje: {
         type: String,
         required: true
+    },
+    estado: {
+        type: String,
+        enum: ['Pendiente', 'Leída', 'Respondida'],
+        default: 'Pendiente'
     }
-}, 
-{
+}, {
     // Agregamos automáticamente la fecha de creación y actualización
-    timestamps: true 
+    timestamps: true
 });
 
 module.exports = mongoose.model('Consulta', ConsultaSchema);
