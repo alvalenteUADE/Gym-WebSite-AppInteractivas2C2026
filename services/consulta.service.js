@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Consulta = require('../models/Consulta.model');
 
 exports.crearConsulta = async function (data) {
@@ -52,6 +53,11 @@ exports.modificarEstado = async function (id, nuevoEstado) {
 };
 
 exports.eliminarConsulta = async function (id) {
+    // Validar que el ID tenga formato válido de MongoDB para evitar CastError
+    if (!mongoose.isValidObjectId(id)) {
+        throw new Error('No se encontró la consulta con ese ID.');
+    }
+
     try {
         const consultaEliminada = await Consulta.findByIdAndDelete(id);
 
