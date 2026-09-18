@@ -16,7 +16,37 @@ exports.crearConsulta = async function (data) {
         const consultaGuardada = await nuevaConsulta.save();
         return consultaGuardada;
     } catch (e) {
-        console.error('Error en el servicio de Consulta:', e);
+        console.error('Error en el servicio de Consulta al crear:', e);
         throw new Error('Error al guardar la consulta en la base de datos');
+    }
+};
+
+exports.modificarEstado = async function (id, nuevoEstado) {
+    // Validación contra los estados permitidos
+    const estadosValidos = ['Pendiente', 'Leída', 'Respondida'];
+    
+    if (!estadosValidos.includes(nuevoEstado)) {
+        throw new Error('Estado inválido. Los estados permitidos son: Pendiente, Leída, Respondida.');
+    }
+
+    try {
+        const consultaActualizada = await Consulta.findByIdAndUpdate(
+            id,
+            { estado: nuevoEstado },
+            { new: true, runValidators: true }
+        );
+
+        if (!consultaActualizada) {
+            throw new Error('No se encontró la consulta con ese ID.');
+        }
+
+        return consultaActualizada;
+    } catch (e) {
+        // Si el error ya lo lanzamos nosotros, lo dejamos pasar
+        if (e.message === 'No se encontró la consulta con ese ID.') {
+            throw e;
+        }
+        console.error('Error en el servicio de Consulta al modificar estado:', e);
+        throw new Error('Error al modificar el estado de la consulta');
     }
 };
