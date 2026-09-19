@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const ConsultaController = require('../controllers/consulta.controller');
-const authMiddleware = require('../middlewares/auth.middleware'); 
+const ConsultaController = require('../../controllers/consulta.controller');
+const authMiddleware = require('../../middlewares/auth.middleware'); 
 
 // Enviar una consulta de contacto (público, sin autenticación)
 router.post('/create', ConsultaController.crearConsulta);

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const InstitutionController = require('../controllers/institution.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
+const InstitutionController = require('../../controllers/institution.controller');
+const authMiddleware = require('../../middlewares/auth.middleware');
 
 // Crear una institucion 
 router.post('/create', authMiddleware, InstitutionController.crearInstitucion);

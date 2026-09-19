@@ -4,15 +4,9 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config');
 
-// IMPORTAMOS LAS NUEVAS RUTAS ACÁ:
-const institutionRouter = require('./routes/institution.route');
-const userRouter = require('./routes/api/user.route');
-
-const consultaRouter = require('./routes/consulta.route'); 
-
-const categoryRouter = require('./routes/category.route');
-const publicacionRouter = require('./routes/publicacion.route');
-
+// Importación de routers personalizados
+const indexRouter = require('./routes/index');
+const apiRouter = require('./routes/api');
 
 const app = express();
 
@@ -23,19 +17,9 @@ app.use(express.json({ limit: '10mb' }));
 (async () => {
     await connectDB();
 
-    app.get('/', (req, res) => {
-        res.send('¡API del Gimnasio funcionando correctamente!');
-    });
-
-    // LE DECIMOS A EXPRESS QUE LAS USE ACÁ:
-    app.use('/api/institution', institutionRouter);
-    app.use('/api/user', userRouter);
-
-    app.use('/api/consulta', consultaRouter);
-
-    app.use('/api/category', categoryRouter);
-    app.use('/api/publicacion', publicacionRouter);
-
+    // Definición de rutas
+    app.use('/api', apiRouter); // Las rutas que comienzan con /api usarán el router apiRouter
+    app.use('/', indexRouter);  // Las rutas base usarán el router indexRouter
 
     const PORT = process.env.PORT || 4000;
     app.listen(PORT, () => {
