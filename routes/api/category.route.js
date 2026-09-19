@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const CategoryController = require('../controllers/category.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
+const CategoryController = require('../../controllers/category.controller');
+const authMiddleware = require('../../middlewares/auth.middleware');
 
 // Listar todas las categorías (público, lo usa el sitio para filtrar publicaciones)
 router.get('/', CategoryController.listarCategorias);

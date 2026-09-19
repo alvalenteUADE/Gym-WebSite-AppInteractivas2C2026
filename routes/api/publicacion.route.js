@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const PublicacionController = require('../controllers/publicacion.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
+const PublicacionController = require('../../controllers/publicacion.controller');
+const authMiddleware = require('../../middlewares/auth.middleware');
 
 // Listar todas las publicaciones (público)
 router.get('/', PublicacionController.listarPublicaciones);
