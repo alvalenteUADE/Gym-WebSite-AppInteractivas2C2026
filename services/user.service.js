@@ -115,7 +115,7 @@ exports.solicitarRecuperacionPassword = async function (correo) {
         const minutosExpiracion = parseInt(process.env.RESET_TOKEN_EXPIRATION_MIN, 10) || 15;
 
         admin.resetPasswordToken = tokenRecuperacion;
-        admin.resetPasswordExpires = new Date(Date.now() + minutosExpiracion * 15 * 1000);
+        admin.resetPasswordExpires = new Date(Date.now() + minutosExpiracion * 60 * 1000);
         await admin.save();
 
         const baseUrl = process.env.FRONTEND_URL || 'http://localhost:4000';

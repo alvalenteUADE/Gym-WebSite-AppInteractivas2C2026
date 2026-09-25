@@ -13,7 +13,7 @@ module.exports = [
     {
         nombre: 'Alejandro',
         apellido: 'Valente',
-        correo: 'admin@gymfitness.com',
+        correo: 'alejandro.valente@gymfitness.com',
         telefono: '1155551234',
         password: 'Admin1234'
     },
