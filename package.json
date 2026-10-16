@@ -2,10 +2,14 @@
   "name": "gym-website-appinteractivas2c2026",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js",
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
     "seed": "node scripts/seed/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,7 +20,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/alvalenteUADE/Gym-WebSite-AppInteractivas2C2026/issues"
   },
@@ -28,9 +31,13 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.9.4",
-    "nodemailer": "^10.0.10"
+    "nodemailer": "^10.0.10",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "@vitejs/plugin-react": "^5.0.4",
+    "vite": "^8.3.0"
   }
 }
