@@ -1,0 +1,26 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background: var(--color-bg, #f7f8f4);
+  color: var(--color-text, #55615b);
+  font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+#root {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 0;
+  text-align: left;
+}

@@ -25,6 +25,9 @@
   },
   "homepage": "https://github.com/alvalenteUADE/Gym-WebSite-AppInteractivas2C2026#readme",
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^9.5.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -36,8 +39,8 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14",
     "@vitejs/plugin-react": "^5.0.4",
+    "nodemon": "^3.1.14",
     "vite": "^8.3.0"
   }
 }
