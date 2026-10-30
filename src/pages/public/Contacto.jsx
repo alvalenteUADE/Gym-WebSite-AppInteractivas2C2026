@@ -26,10 +26,47 @@ const contactDetails = [
 
 function Contacto() {
   const [notice, setNotice] = useState('')
+  const [errors, setErrors] = useState({})
 
   const handleSubmit = (event) => {
     event.preventDefault()
+
+    const formData = new FormData(event.currentTarget)
+    const requiredFields = ['nombre', 'correo', 'asunto', 'mensaje']
+    const nextErrors = Object.fromEntries(
+      requiredFields
+        .filter((name) => !formData.get(name)?.toString().trim())
+        .map((name) => [name, 'Este campo es obligatorio.']),
+    )
+    const correo = formData.get('correo')?.toString().trim() ?? ''
+
+    if (
+      correo &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)
+    ) {
+      nextErrors.correo = 'Ingresá un correo electrónico válido.'
+    }
+
+    setErrors(nextErrors)
+    setNotice('')
+
+    if (Object.keys(nextErrors).length > 0) {
+      return
+    }
+
     setNotice('El envío de consultas estará disponible próximamente.')
+  }
+
+  const handleChange = (event) => {
+    const { name } = event.target
+
+    if (errors[name]) {
+      setErrors((currentErrors) => {
+        const nextErrors = { ...currentErrors }
+        delete nextErrors[name]
+        return nextErrors
+      })
+    }
   }
 
   return (
@@ -74,7 +111,9 @@ function Contacto() {
         <Box
           component="form"
           className="contact__form"
+          noValidate
           onSubmit={handleSubmit}
+          onChange={handleChange}
         >
           <Typography component="h3" variant="h3" className="contact__form-title">
             Envianos tu consulta
@@ -86,6 +125,8 @@ function Contacto() {
               name="nombre"
               autoComplete="name"
               required
+              error={Boolean(errors.nombre)}
+              helperText={errors.nombre}
               fullWidth
             />
             <TextField
@@ -94,6 +135,8 @@ function Contacto() {
               type="email"
               autoComplete="email"
               required
+              error={Boolean(errors.correo)}
+              helperText={errors.correo}
               fullWidth
             />
             <TextField
@@ -107,6 +150,8 @@ function Contacto() {
               label="Asunto"
               name="asunto"
               required
+              error={Boolean(errors.asunto)}
+              helperText={errors.asunto}
               fullWidth
             />
             <TextField
@@ -116,6 +161,8 @@ function Contacto() {
               multiline
               minRows={5}
               required
+              error={Boolean(errors.mensaje)}
+              helperText={errors.mensaje}
               fullWidth
             />
           </Box>
