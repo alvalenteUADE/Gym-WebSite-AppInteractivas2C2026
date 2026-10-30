@@ -1,0 +1,116 @@
+.contact__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(24px, 4vw, 48px);
+  align-items: start;
+}
+
+.contact__info {
+  padding: clamp(28px, 4vw, 40px);
+  border-radius: var(--radius-lg, 24px);
+  background: var(--color-primary, #174d37);
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.contact .contact__info-title {
+  color: #ffffff;
+}
+
+.contact__info-description {
+  margin-top: 12px;
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+
+.contact__details {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 36px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.contact__detail-label {
+  color: var(--color-accent, #b9e8c9);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.contact .contact__detail-value {
+  color: #ffffff;
+  font-size: 0.96rem;
+  line-height: 1.55;
+  text-decoration: none;
+}
+
+.contact a.contact__detail-value:hover {
+  color: var(--color-accent, #b9e8c9);
+}
+
+.contact__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: clamp(24px, 4vw, 40px);
+  border: 1px solid var(--color-border, #dfe4da);
+  border-radius: var(--radius-lg, 24px);
+  background: var(--color-surface, #ffffff);
+  box-shadow: var(--shadow-sm);
+}
+
+.contact .contact__form-title {
+  color: var(--color-ink, #14201a);
+}
+
+.contact__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.contact__message {
+  grid-column: 1 / -1;
+}
+
+.contact__notice {
+  margin-top: -4px;
+}
+
+.contact__submit {
+  align-self: flex-start;
+}
+
+.contact__form-note {
+  margin-top: -12px;
+  color: var(--color-muted, #78837d);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 760px) {
+  .contact__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .contact__fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .contact__message {
+    grid-column: auto;
+  }
+
+  .contact__submit {
+    width: 100%;
+  }
+}
