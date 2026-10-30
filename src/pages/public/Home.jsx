@@ -11,6 +11,7 @@ import heroImage from '../../assets/fondos/background6.jpg'
 import strengthImage from '../../assets/equipo/1.jpg'
 import cardioImage from '../../assets/equipo/3.jpg'
 import personalImage from '../../assets/equipo/8.jpg'
+import Contacto from './Contacto'
 import theme from '../../theme'
 import '../../styles/base/tokens.css'
 import '../../styles/base/base.css'
@@ -191,10 +192,10 @@ function Home() {
             }}
             stats={heroStats}
           />
+          <Contacto />
         </main>
 
         <Footer
-          id="contacto"
           logo={logo}
           brandName="Fitness Gym"
           description="Un espacio para entrenar, progresar y sentirte mejor. Equipamiento, clases y acompañamiento profesional."
