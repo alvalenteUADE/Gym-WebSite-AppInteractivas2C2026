@@ -7,6 +7,7 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
   const [diaFin, setDiaFin] = useState('Viernes');
   const [horaApertura, setHoraApertura] = useState('09:00');
   const [horaCierre, setHoraCierre] = useState('22:00');
+  const [errorHorario, setErrorHorario] = useState('');
 
   const {
     register,
@@ -30,12 +31,14 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
       reset();
       setHorariosList([]);
     }
+    setErrorHorario('');
   }, [institucionInicial, setValue, reset]);
 
   const agregarHorario = () => {
     if (!diaInicio || !diaFin || !horaApertura || !horaCierre) return;
     const nuevoBloque = `De ${diaInicio} a ${diaFin}, de ${horaApertura} a ${horaCierre} hs`;
     setHorariosList([...horariosList, nuevoBloque]);
+    setErrorHorario('');
   };
 
   const eliminarHorario = (index) => {
@@ -44,9 +47,11 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
 
   const onSubmit = (data) => {
     if (horariosList.length === 0) {
-      alert("Debes agregar al menos un horario de atención.");
+      setErrorHorario("Debes agregar al menos un horario de atención.");
       return;
     }
+
+    setErrorHorario('');
 
     const institucionDatos = {
       id: institucionInicial ? institucionInicial.id : Date.now(),
@@ -76,8 +81,9 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Nombre */}
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Nombre:</label>
+          <label htmlFor="nombre" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Nombre:</label>
           <input
+            id="nombre"
             type="text"
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box', border: '1px solid #ccc', borderRadius: '4px' }}
             {...register("nombre", {
@@ -93,8 +99,9 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
 
         {/* Descripción */}
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Descripción:</label>
+          <label htmlFor="descripcion" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Descripción:</label>
           <textarea
+            id="descripcion"
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box', resize: 'vertical', minHeight: '80px', border: '1px solid #ccc', borderRadius: '4px' }}
             {...register("descripcion", {
               required: "La descripción es obligatoria",
@@ -109,8 +116,9 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
 
         {/* Dirección */}
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Dirección:</label>
+          <label htmlFor="direccion" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Dirección:</label>
           <input
+            id="direccion"
             type="text"
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box', border: '1px solid #ccc', borderRadius: '4px' }}
             {...register("direccion", {
@@ -126,8 +134,9 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
 
         {/* Teléfono */}
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Teléfono (10 dígitos):</label>
+          <label htmlFor="telefono" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Teléfono (10 dígitos):</label>
           <input
+            id="telefono"
             type="text"
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box', border: '1px solid #ccc', borderRadius: '4px' }}
             {...register("telefono", {
@@ -143,8 +152,9 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
 
         {/* Redes Sociales */}
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Redes Sociales (Instagram / Web):</label>
+          <label htmlFor="redesSociales" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Redes Sociales (Instagram / Web):</label>
           <input
+            id="redesSociales"
             type="text"
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box', border: '1px solid #ccc', borderRadius: '4px' }}
             {...register("redesSociales")}
@@ -209,6 +219,8 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
               ))}
             </ul>
           )}
+
+          {errorHorario && <p style={{ color: 'red', fontSize: '12px', marginTop: '8px' }}>{errorHorario}</p>}
         </div>
 
         <button type="submit" style={{ width: '100%', padding: '12px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '15px' }}>

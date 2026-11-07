@@ -42,9 +42,9 @@ export const AdminInstitucion = () => {
     <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Administración de Instituciones</h1>
       
-      {/* Cartel de éxito flotante */}
+      {/* Cartel de éxito flotante accesible */}
       {mensajeExito && (
-        <div style={{ padding: '12px', marginBottom: '20px', backgroundColor: '#d4edda', color: '#155724', border: '1px solid #c3e6cb', borderRadius: '6px', textAlign: 'center', fontWeight: 'bold' }}>
+        <div role="status" aria-live="polite" style={{ padding: '12px', marginBottom: '20px', backgroundColor: '#d4edda', color: '#155724', border: '1px solid #c3e6cb', borderRadius: '6px', textAlign: 'center', fontWeight: 'bold' }}>
           {mensajeExito}
         </div>
       )}
