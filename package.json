@@ -36,10 +36,17 @@
     "mongoose": "^9.9.4",
     "nodemailer": "^10.0.10",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-hook-form": "^7.92.0",
+    "react-router-dom": "^7.18.5"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@vitejs/plugin-react": "^5.0.4",
+    "eslint": "^10.14.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.14.0",
     "nodemon": "^3.1.14",
     "vite": "^8.3.0"
   }
