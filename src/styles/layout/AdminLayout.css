@@ -1,0 +1,124 @@
+.admin {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--color-bg, #f7f8f4);
+  color: var(--color-text, #55615b);
+  font-family: var(--font-sans, system-ui, sans-serif);
+  text-align: left;
+}
+
+.admin *,
+.admin *::before,
+.admin *::after {
+  box-sizing: border-box;
+}
+
+.admin :where(h1, h2, h3, p) {
+  margin: 0;
+}
+
+.admin :where(ul) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin :where(img) {
+  max-width: 100%;
+}
+
+.admin [id] {
+  scroll-margin-top: 92px;
+}
+
+.admin main {
+  flex: 1;
+}
+
+/* Barra de navegación ----------------------------------------------------- */
+
+.admin-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.admin-nav__brand-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.admin-nav__brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.admin-nav__brand-name {
+  color: var(--color-ink, #14201a);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.admin-nav__brand-tag {
+  color: var(--color-muted, #78837d);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-nav__link {
+  position: relative;
+  color: var(--color-text, #55615b);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition, 180ms ease);
+}
+
+.admin-nav__link:hover {
+  color: var(--color-ink, #14201a);
+}
+
+.admin-nav__link--active {
+  color: var(--color-primary, #174d37);
+}
+
+.admin-nav__link--active::after {
+  position: absolute;
+  bottom: -7px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-primary, #174d37);
+  content: '';
+}
+
+.admin-nav__menu-icon {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 20px;
+}
+
+.admin-nav__menu-icon span {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-ink, #14201a);
+}
+
+.admin-nav__close-icon {
+  display: inline-flex;
+  color: var(--color-ink, #14201a);
+  font-size: 1.6rem;
+  line-height: 1;
+}
