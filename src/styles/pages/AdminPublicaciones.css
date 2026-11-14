@@ -40,8 +40,6 @@
   border-radius: var(--radius-md, 16px);
 }
 
-/* Estados de carga y vacío ------------------------------------------------ */
-
 .publicaciones__loading {
   display: flex;
   align-items: center;
@@ -75,8 +73,6 @@
   line-height: 1.6;
 }
 
-/* Tabla ------------------------------------------------------------------- */
-
 .publicaciones__table-wrapper {
   border: 1px solid var(--color-border, #dfe4da);
   border-radius: var(--radius-lg, 24px);
@@ -103,7 +99,7 @@
   border-bottom: 0;
 }
 
-/* Las dadas de baja se atenúan para distinguirlas de un vistazo */
+
 .publicaciones__row--inactiva td {
   opacity: 0.55;
 }

@@ -1,7 +1,3 @@
-/* Pantalla de inicio del panel.
-   El marco (.admin) y la barra de navegación están en layout/AdminLayout.css */
-
-/* Métricas ---------------------------------------------------------------- */
 
 .admin__metrics {
   display: grid;
@@ -44,8 +40,6 @@
   font-size: 0.82rem;
   line-height: 1.5;
 }
-
-/* Tarjetas de gestión ----------------------------------------------------- */
 
 .admin__cards {
   display: grid;
@@ -94,58 +88,4 @@
 
 .admin__card-action {
   margin-top: auto;
-}
-
-/* Actividad reciente ------------------------------------------------------ */
-
-.admin__activity {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.admin__activity-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 18px 20px;
-  border: 1px solid var(--color-border, #dfe4da);
-  border-radius: var(--radius-md, 16px);
-  background: rgba(255, 255, 255, 0.68);
-}
-
-.admin__activity-mark {
-  flex: 0 0 auto;
-  width: 10px;
-  height: 10px;
-  margin-top: 6px;
-  border-radius: 999px;
-  background: var(--color-primary, #174d37);
-}
-
-.admin__activity-content {
-  display: flex;
-  flex: 1;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 4px 16px;
-}
-
-.admin__activity-text {
-  color: var(--color-ink, #14201a);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.admin__activity-when {
-  color: var(--color-muted, #78837d);
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
-
-@media (max-width: 600px) {
-  .admin__activity-content {
-    flex-direction: column;
-  }
 }

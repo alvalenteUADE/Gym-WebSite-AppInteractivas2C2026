@@ -1,26 +1,10 @@
-// ============================================================
-// CONFIGURACIÓN DEL PIE DE PÁGINA
-// ------------------------------------------------------------
-// El pie es el mismo en el sitio público y en el panel de
-// administración, así que su contenido vive acá y lo consumen
-// las dos partes en lugar de repetirlo.
-//
-// Los enlaces de "Explorar" usan ruta absoluta con ancla (/#inicio)
-// para que funcionen desde cualquier pantalla: estando en el home
-// es un scroll dentro de la misma página, y desde /admin llevan al
-// sitio público y bajan a la sección.
-//
-// Al conectar el backend, estos datos salen de
-// GET /api/institution (dirección, teléfono, horarios y redes).
-// ============================================================
-
 export const FOOTER_COLUMNS = [
   {
     title: 'Explorar',
     items: [
-      { label: 'Inicio', href: '/#inicio' },
-      { label: 'Actividades', href: '/#actividades' },
-      { label: 'Planes', href: '/#planes' },
+      { label: 'Inicio', href: '#inicio' },
+      { label: 'Actividades', href: '#actividades' },
+      { label: 'Planes', href: '#planes' },
     ],
   },
   {

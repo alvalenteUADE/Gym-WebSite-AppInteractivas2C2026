@@ -3,21 +3,14 @@ import * as api from '../mocks/publicaciones.mock'
 
 const MSG_ERROR_GENERICO = 'Ocurrió un error inesperado.'
 
-/**
- * Centraliza el estado y las operaciones de publicaciones.
- *
- * Mismo contrato que useCategorias: las operaciones devuelven
- * { ok, error } en lugar de lanzar, y toda la coordinación con la
- * API queda acá para que la pantalla sólo muestre y dispare acciones.
- */
+
 export function usePublicaciones() {
   const [publicaciones, setPublicaciones] = useState([])
   const [cargando, setCargando] = useState(true)
   const [errorCarga, setErrorCarga] = useState('')
   const [guardando, setGuardando] = useState(false)
 
-  // Carga inicial. El flag `activo` evita escribir estado si el
-  // componente se desmontó antes de que responda la API.
+
   useEffect(() => {
     let activo = true
 
@@ -83,7 +76,7 @@ export function usePublicaciones() {
     [ejecutar],
   )
 
-  // Baja lógica (PATCH /:id/estado), distinta del borrado físico.
+  
   const cambiarEstado = useCallback(
     (id, activa) => ejecutar(() => api.cambiarEstado(id, activa)),
     [ejecutar],

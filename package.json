@@ -2,11 +2,13 @@
   "name": "gym-website-appinteractivas2c2026",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
+  "type": "commonjs",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "vite",
+    "dev": "concurrently -n back,front -c blue,magenta \"npm:dev:back\" \"npm:dev:front\"",
+    "dev:back": "nodemon app.js",
+    "dev:front": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -43,6 +45,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@vitejs/plugin-react": "^5.0.4",
+    "concurrently": "^10.0.7",
     "eslint": "^10.14.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",

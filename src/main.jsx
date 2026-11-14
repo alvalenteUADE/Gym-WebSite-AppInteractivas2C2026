@@ -13,7 +13,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        {/* Sitio público */}
+       
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
 
@@ -28,11 +28,11 @@ createRoot(document.getElementById('root')).render(
           <Route path="categorias" element={<AdminCategorias />} />
           <Route path="publicaciones" element={<AdminPublicaciones />} />
 
-          {/* Una URL inexistente bajo /admin vuelve al inicio del panel */}
+        
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
 
-        {/* Cualquier otra URL vuelve al inicio del sitio */}
+        
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

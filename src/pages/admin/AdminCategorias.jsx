@@ -21,7 +21,7 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import { useCategorias } from '../../hooks/useCategorias'
 import '../../styles/pages/AdminCategorias.css'
 
-// Estado inicial de los diálogos. `modo` vale 'cerrado' | 'crear' | 'editar'.
+
 const DIALOGO_CERRADO = { modo: 'cerrado', categoria: null }
 
 function AdminCategorias() {
@@ -40,8 +40,7 @@ function AdminCategorias() {
   const [aEliminar, setAEliminar] = useState(null)
   const [aviso, setAviso] = useState('')
 
-  // Se filtra en memoria: el listado de categorías es chico y el backend
-  // no expone búsqueda. Si en el futuro crece, esto pasa a ser un query param.
+
   const filtradas = useMemo(() => {
     const termino = busqueda.trim().toLowerCase()
 
@@ -76,7 +75,7 @@ function AdminCategorias() {
       )
     }
 
-    // Si falló, el diálogo queda abierto y muestra el error del servidor.
+
     return resultado
   }
 
@@ -230,8 +229,7 @@ function AdminCategorias() {
         )}
       </Section>
 
-      {/* Se monta sólo mientras está abierto: así el formulario arranca
-          limpio en cada apertura, sin sincronizar props con un efecto. */}
+
       {dialogo.modo !== 'cerrado' && (
         <CategoriaFormDialog
           categoria={dialogo.categoria}

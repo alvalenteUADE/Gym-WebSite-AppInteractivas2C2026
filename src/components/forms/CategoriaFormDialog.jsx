@@ -10,19 +10,7 @@ import TextField from '@mui/material/TextField'
 
 const LARGO_MAXIMO = 60
 
-/**
- * Formulario de alta y edición de una categoría, en un diálogo.
- *
- * No sabe nada de la API: valida el nombre en el front (mismas reglas que
- * el backend) y delega el guardado en `onGuardar`, que devuelve
- * { ok, error } para poder mostrar acá los errores de negocio del
- * servidor, como el nombre duplicado.
- *
- * El padre lo renderiza sólo mientras está abierto, así cada apertura
- * monta el componente de cero y el estado arranca limpio. Es la
- * alternativa que recomienda React a sincronizar props con un useEffect
- * (ver "You Might Not Need an Effect").
- */
+
 function CategoriaFormDialog({
   categoria = null,
   guardando = false,
@@ -35,7 +23,7 @@ function CategoriaFormDialog({
   const [error, setError] = useState('')
   const [errorServidor, setErrorServidor] = useState('')
 
-  // Mismas validaciones que aplica el backend antes de guardar.
+  
   const validar = (valor) => {
     const limpio = valor.trim()
 
