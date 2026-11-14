@@ -18,7 +18,7 @@ import '../../styles/forms/PublicacionFormDialog.css'
 const LARGO_NOMBRE = 80
 const LARGO_DESCRIPCION = 600
 
-// Valores iniciales de un alta. `precio` vacío = servicio sin precio.
+
 const VACIO = {
   nombre: '',
   descripcion: '',
@@ -28,8 +28,6 @@ const VACIO = {
   destacada: false,
 }
 
-// Una publicación existente llega con la categoría poblada
-// ({ _id, nombre }); el formulario trabaja sólo con el id.
 const desdePublicacion = (publicacion) => ({
   nombre: publicacion.nombre ?? '',
   descripcion: publicacion.descripcion ?? '',
@@ -39,16 +37,7 @@ const desdePublicacion = (publicacion) => ({
   destacada: publicacion.destacada ?? false,
 })
 
-/**
- * Formulario de alta y edición de una publicación.
- *
- * Valida en el front las mismas reglas que publicacion.controller.js:
- * nombre, descripción y categoría obligatorios; precio numérico >= 0
- * y opcional; imágenes como lista de strings no vacíos.
- *
- * El padre lo monta sólo mientras está abierto, así el estado arranca
- * limpio en cada apertura sin sincronizar props con un efecto.
- */
+
 function PublicacionFormDialog({
   publicacion = null,
   categorias = [],
@@ -115,7 +104,7 @@ function PublicacionFormDialog({
     setImagenes((previas) => previas.filter((imagen) => imagen !== url))
   }
 
-  // Mismas reglas que valida el controlador del backend.
+ 
   const validar = () => {
     const siguiente = {}
     const nombre = valores.nombre.trim()
@@ -137,8 +126,6 @@ function PublicacionFormDialog({
       siguiente.categoria = 'Elegí una categoría.'
     }
 
-    // El precio es opcional, pero si se informa tiene que ser un
-    // número mayor o igual a 0 (coincide con el min: 0 del modelo).
     if (valores.precio !== '' && valores.precio !== null) {
       const numero = Number(valores.precio)
 
@@ -260,7 +247,7 @@ function PublicacionFormDialog({
             />
           </Box>
 
-          {/* Imágenes: el modelo acepta varias, por URL o data URI */}
+          
           <Box className="publicacion-form__images">
             <Typography component="span" className="publicacion-form__label">
               Imágenes

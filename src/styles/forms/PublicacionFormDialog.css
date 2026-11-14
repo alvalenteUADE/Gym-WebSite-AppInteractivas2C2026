@@ -43,7 +43,7 @@
   margin-top: 12px;
 }
 
-/* Las URLs son largas: se recortan para no romper el ancho del diálogo */
+
 .publicacion-form__chip {
   max-width: 100%;
 }

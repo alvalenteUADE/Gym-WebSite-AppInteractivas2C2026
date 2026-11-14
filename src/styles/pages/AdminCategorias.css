@@ -19,8 +19,6 @@
   border-radius: var(--radius-md, 16px);
 }
 
-/* Estados de carga y vacío ------------------------------------------------ */
-
 .categorias__loading {
   display: flex;
   align-items: center;
@@ -53,8 +51,6 @@
   font-size: 0.95rem;
   line-height: 1.6;
 }
-
-/* Tabla ------------------------------------------------------------------- */
 
 .categorias__table-wrapper {
   border: 1px solid var(--color-border, #dfe4da);

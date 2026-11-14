@@ -32,7 +32,7 @@ const ESTADOS = [
   { valor: 'inactivas', label: 'Dadas de baja' },
 ]
 
-// El modelo permite publicaciones sin precio (un servicio, por ejemplo).
+
 const formatearPrecio = (precio) => {
   if (precio === undefined || precio === null) {
     return 'Sin precio'
@@ -57,7 +57,7 @@ function AdminPublicaciones() {
     eliminar,
   } = usePublicaciones()
 
-  // Las categorías alimentan el select del formulario y el filtro.
+
   const { categorias, cargando: cargandoCategorias } = useCategorias()
 
   const [busqueda, setBusqueda] = useState('')
@@ -67,9 +67,7 @@ function AdminPublicaciones() {
   const [aEliminar, setAEliminar] = useState(null)
   const [aviso, setAviso] = useState('')
 
-  // Los tres filtros se combinan. Se resuelve en memoria porque el
-  // backend no expone búsqueda ni filtrado; al integrar, esto puede
-  // pasar a query params sin cambiar la interfaz del componente.
+
   const filtradas = useMemo(() => {
     const termino = busqueda.trim().toLowerCase()
 
@@ -126,7 +124,7 @@ function AdminPublicaciones() {
     return resultado
   }
 
-  // Baja lógica: no borra el registro, sólo lo saca del sitio público.
+
   const alternarEstado = async (publicacion) => {
     const resultado = await cambiarEstado(publicacion._id, !publicacion.activa)
 

@@ -21,8 +21,6 @@ import '../../styles/base/tokens.css'
 import '../../styles/base/base.css'
 import '../../styles/layout/AdminLayout.css'
 
-// Navegación del panel. Se usa react-router en lugar de <a href> para que el
-// cambio de pantalla no recargue la página y no se pierda el estado de la app.
 const enlaces = [
   { label: 'Inicio', to: '/admin', end: true },
   { label: 'Categorías', to: '/admin/categorias' },
@@ -32,11 +30,6 @@ const enlaces = [
 const claseEnlace = ({ isActive }) =>
   isActive ? 'admin-nav__link admin-nav__link--active' : 'admin-nav__link'
 
-/**
- * Marco común de todas las pantallas del panel: tema, barra de navegación y pie.
- * Las pantallas se renderizan en el <Outlet /> mediante rutas anidadas, así el
- * header y el footer se montan una sola vez y no se repiten en cada página.
- */
 function AdminLayout() {
   const [menuAbierto, setMenuAbierto] = useState(false)
 

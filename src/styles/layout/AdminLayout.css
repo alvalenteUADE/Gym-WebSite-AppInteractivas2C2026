@@ -37,8 +37,6 @@
   flex: 1;
 }
 
-/* Barra de navegación ----------------------------------------------------- */
-
 .admin-nav__brand {
   display: inline-flex;
   align-items: center;
