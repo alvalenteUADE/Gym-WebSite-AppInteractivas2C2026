@@ -8,7 +8,7 @@
 .contact__info {
   padding: clamp(28px, 4vw, 40px);
   border-radius: var(--radius-lg, 24px);
-  background: var(--color-primary, #174d37);
+  background: var(--color-dark, #174d37);
   color: rgba(255, 255, 255, 0.76);
 }
 
