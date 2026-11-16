@@ -2,36 +2,37 @@
 // SCRIPT DE INICIALIZACIÓN DE LA BASE DE DATOS
 // ------------------------------------------------------------
 // 1. Limpia las colecciones (directo por Mongoose, ver limpiar.js).
-// 2. Carga datos de prueba consumiendo los endpoints de la API,
-//    así se validan las mismas reglas que en producción.
+// 2. Inserta los usuarios directamente en la BD asignando roles,
+//    y genera directamente el token de administrador para los pasos siguientes.
+// 3. Carga los datos de prueba consumiendo los endpoints de la API.
 //
 // Uso:
-//   1. Levantar el servidor:  npm run dev
-//   2. En otra terminal:      npm run seed
+//   1. Levantar el servidor:   npm run dev
+//   2. En otra terminal:       npm run seed
 //
 // ATENCIÓN: borra los datos existentes en cada corrida.
-//
-// Para agregar datos de prueba editar los archivos en ./data:
-//   data/usuarios.js       -> administradores
-//   data/institucion.js    -> información del comercio
-//   data/categorias.js     -> categorías
-//   data/publicaciones.js  -> productos y servicios
 // ============================================================
 
 require('dotenv').config();
 
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const api = require('./api');
 const limpiarBaseDeDatos = require('./limpiar');
+const User = require('../../models/User.model'); // Importamos el modelo de Mongoose para inserción directa
 const usuarios = require('./data/usuarios');
 const institucion = require('./data/institucion');
 const categorias = require('./data/categorias');
 const publicaciones = require('./data/publicaciones');
 
+// URI de conexión a MongoDB (Sincronizada con MONGODB_URI de tu .env)
+const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.DB_URI || "mongodb+srv://alvalenteuade_db_user:Password01@cluster0.qkuw4vx.mongodb.net/gym";
+
 // ---------- Helpers de log ----------
 const log = {
     titulo: (msg) => console.log(`\n=== ${msg} ===`),
-    ok: (msg) => console.log(`  [OK]    ${msg}`),
-    error: (msg) => console.log(`  [ERROR] ${msg}`)
+    ok: (msg) => console.log(`   [OK]     ${msg}`),
+    error: (msg) => console.log(`   [ERROR] ${msg}`)
 };
 
 // ============================================================
@@ -55,26 +56,60 @@ async function limpiar() {
 }
 
 // ============================================================
-// PASO 2: usuarios administradores
-// Devuelve el token del primer usuario para los pasos siguientes.
+// PASO 2: usuarios administradores y de prueba
+// Crea los usuarios directo en BD con su rol y genera el token.
 // ============================================================
 async function cargarUsuarios() {
-    log.titulo(`Usuarios administradores (${usuarios.length})`);
+    log.titulo(`Usuarios de prueba (${usuarios.length})`);
     let token = null;
 
-    for (const usuario of usuarios) {
-        const respuesta = await api.post('/api/user/register', usuario);
+    // Nos aseguramos de reconectar Mongoose por si limpiar.js cerró la conexión
+    if (mongoose.connection.readyState !== 1) {
+        await mongoose.connect(MONGO_URI);
+    }
 
-        if (respuesta.status === 201) {
-            log.ok(`Registrado: ${usuario.correo}`);
-            if (!token) token = respuesta.body.data.token;
-        } else {
-            log.error(`${usuario.correo}: ${respuesta.body?.message || respuesta.status}`);
+    for (let i = 0; i < usuarios.length; i++) {
+        const datosUsuario = usuarios[i];
+        try {
+            // El primer usuario será 'admin', los siguientes 'cliente'
+            const rolAsignado = i === 0 ? 'admin' : 'cliente';
+
+            const nuevoUsuario = new User({
+                ...datosUsuario,
+                rol: rolAsignado
+            });
+
+            await nuevoUsuario.save(); // Dispara el hash de contraseña del modelo
+            log.ok(`Creado en DB (${rolAsignado}): ${datosUsuario.correo}`);
+        } catch (error) {
+            log.error(`${datosUsuario.correo}: ${error.message}`);
         }
     }
 
+    // Generamos el token de administrador directamente usando el ID real de la base de datos
+    try {
+        const adminUser = await User.findOne({ correo: usuarios[0].correo });
+        
+        if (!adminUser) {
+            throw new Error('No se encontró al usuario administrador en la base de datos.');
+        }
+
+        const secretKey = process.env.JWT_SECRET || process.env.SECRET_KEY || 'secreto_super_seguro';
+        token = jwt.sign(
+            { id: adminUser._id, rol: adminUser.rol, correo: adminUser.correo },
+            secretKey,
+            { expiresIn: '1h' }
+        );
+
+        if (token) {
+            log.ok('Token de administrador generado exitosamente para el seed.');
+        }
+    } catch (e) {
+        throw new Error('No se pudo generar el token de admin: ' + e.message);
+    }
+
     if (!token) {
-        throw new Error('No se pudo registrar ningún administrador. Revisar data/usuarios.js');
+        throw new Error('No se pudo obtener un token de administrador válido. Revisar data/usuarios.js');
     }
 
     return token;
@@ -97,7 +132,6 @@ async function cargarInstitucion(token) {
 
 // ============================================================
 // PASO 4: categorías
-// Devuelve un mapa { nombre -> _id } para asociar publicaciones.
 // ============================================================
 async function cargarCategorias(token) {
     log.titulo(`Categorías (${categorias.length})`);
@@ -146,8 +180,6 @@ async function cargarPublicaciones(token, categoriasPorNombre) {
 
 // ============================================================
 // EJECUCIÓN
-// Para agregar un paso nuevo (ej: institución, consultas),
-// crear su función arriba y sumarla acá en el orden correcto.
 // ============================================================
 (async () => {
     try {
@@ -158,10 +190,19 @@ async function cargarPublicaciones(token, categoriasPorNombre) {
         const categoriasPorNombre = await cargarCategorias(token);
         await cargarPublicaciones(token, categoriasPorNombre);
 
-        console.log('\nSeed finalizado.\n');
+        console.log('\nSeed finalizado con éxito.\n');
+        
+        if (mongoose.connection.readyState === 1) {
+            await mongoose.connection.close();
+        }
         process.exit(0);
     } catch (e) {
         console.error(`\nSeed abortado: ${e.message}\n`);
+        try {
+            if (mongoose.connection.readyState === 1) {
+                await mongoose.connection.close();
+            }
+        } catch {}
         process.exit(1);
     }
 })();

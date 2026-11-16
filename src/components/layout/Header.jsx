@@ -17,69 +17,26 @@ function Header({
   brandName,
   links = [],
   ctaLabel,
-  ctaHref = '#contacto',
+  ctaHref = '/admin/login',
+  brandHref = '#inicio', 
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
   const closeMenu = () => setIsMenuOpen(false)
 
   return (
-    <AppBar position="sticky">
+    <AppBar position="sticky" sx={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-ink)', boxShadow: 'var(--shadow-sm)' }}>
       <Container>
-        <Toolbar
-          disableGutters
-          sx={{ minHeight: { xs: 68, md: 76 } }}
-        >
-          <Box
-            component="a"
-            href="#inicio"
-            className="header__brand"
-            aria-label={`${brandName} - Inicio`}
-            onClick={closeMenu}
-          >
-            {logo && (
-              <Box
-                component="img"
-                src={logo}
-                alt=""
-                aria-hidden="true"
-                className="header__brand-logo"
-              />
-            )}
-            <Box component="span" className="header__brand-name">
-              {brandName}
-            </Box>
+        <Toolbar disableGutters sx={{ minHeight: { xs: 68, md: 76 } }}>
+          <Box component="a" href={brandHref} className="header__brand" aria-label={`${brandName} Inicio`} onClick={closeMenu}>
+            {logo && <Box component="img" src={logo} alt="" aria-hidden="true" className="header__brand-logo" />}
+            <Box component="span" className="header__brand-name">{brandName}</Box>
           </Box>
 
-          <Box
-            component="nav"
-            aria-label="Navegación principal"
-            sx={{
-              display: { xs: 'none', md: 'flex' },
-              alignItems: 'center',
-              gap: 3.5,
-              ml: 'auto',
-            }}
-          >
-            <Box
-              component="ul"
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 3.5,
-                m: 0,
-                p: 0,
-                listStyle: 'none',
-              }}
-            >
+          <Box component="nav" aria-label="Navegación principal" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 3.5, ml: 'auto' }}>
+            <Box component="ul" sx={{ display: 'flex', alignItems: 'center', gap: 3.5, m: 0, p: 0, listStyle: 'none' }}>
               {links.map((link) => (
                 <Box component="li" key={link.href}>
-                  <Box
-                    component="a"
-                    href={link.href}
-                    className="header__link"
-                    onClick={closeMenu}
-                  >
+                  <Box component="a" href={link.href} className="header__link" onClick={closeMenu}>
                     {link.label}
                   </Box>
                 </Box>
@@ -93,101 +50,40 @@ function Header({
             )}
           </Box>
 
-          <IconButton
-            aria-label="Abrir menú"
-            aria-controls="mobile-navigation"
+          <IconButton 
+            aria-label="Abrir menú" 
             aria-expanded={isMenuOpen}
-            onClick={() => setIsMenuOpen(true)}
+            aria-controls="mobile-menu-drawer"
+            onClick={() => setIsMenuOpen(!isMenuOpen)} 
             sx={{ display: { xs: 'inline-flex', md: 'none' }, ml: 'auto' }}
           >
-            <Box
-              component="span"
-              className="header__menu-icon"
-              aria-hidden="true"
-            >
-              <span />
-              <span />
-              <span />
+            <Box component="span" className="header__menu-icon" aria-hidden="true">
+              <span /><span /><span />
             </Box>
           </IconButton>
         </Toolbar>
       </Container>
 
-      <Drawer
-        anchor="right"
-        open={isMenuOpen}
-        onClose={closeMenu}
-        slotProps={{
-          paper: {
-            sx: {
-              width: { xs: '100%', sm: 340 },
-              backgroundColor: 'background.default',
-              backgroundImage: 'none',
-            },
-          },
-        }}
-      >
-        <Box
-          role="presentation"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: '100%',
-            p: 3,
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              mb: 2,
-            }}
-          >
-            <Box component="span" className="header__brand-name">
-              {brandName}
-            </Box>
-
-            <IconButton aria-label="Cerrar menú" onClick={closeMenu}>
-              <Box
-                component="span"
-                className="header__close-icon"
-                aria-hidden="true"
-              >
-                ×
-              </Box>
-            </IconButton>
+      {/* Menú Mobile */}
+      <Drawer anchor="right" open={isMenuOpen} onClose={closeMenu} slotProps={{ paper: { sx: { width: { xs: '100%', sm: 340 }, backgroundColor: 'background.default' } } }}>
+        <Box id="mobile-menu-drawer" role="presentation" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100%', p: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Box component="span" className="header__brand-name">{brandName}</Box>
+            <IconButton aria-label="Cerrar menú" onClick={closeMenu}><Box component="span" aria-hidden="true">×</Box></IconButton>
           </Box>
 
-          <List id="mobile-navigation" disablePadding>
+          <List disablePadding>
             {links.map((link) => (
               <ListItem key={link.href} disablePadding>
-                <ListItemButton
-                  component="a"
-                  href={link.href}
-                  onClick={closeMenu}
-                  sx={{ borderRadius: 2, px: 1.5, py: 1.25 }}
-                >
-                  <ListItemText
-                    primary={link.label}
-                    slotProps={{
-                      primary: {
-                        sx: { fontWeight: 600, color: 'text.primary' },
-                      },
-                    }}
-                  />
+                <ListItemButton component="a" href={link.href} onClick={closeMenu} sx={{ borderRadius: 2, px: 1.5, py: 1.25 }}>
+                  <ListItemText primary={link.label} slotProps={{ primary: { sx: { fontWeight: 600, color: 'text.primary' } } }} />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
 
           {ctaLabel && (
-            <Button
-              href={ctaHref}
-              fullWidth
-              sx={{ mt: 3 }}
-              onClick={closeMenu}
-            >
+            <Button href={ctaHref} fullWidth sx={{ mt: 3 }} onClick={closeMenu}>
               {ctaLabel}
             </Button>
           )}
