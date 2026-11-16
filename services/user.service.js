@@ -7,7 +7,8 @@ const TokenBlacklist = require('../models/TokenBlacklist.model');
 const generarToken = (usuario) => {
     return jwt.sign({ 
         id: usuario._id,
-        correo: usuario.correo 
+        correo: usuario.correo,
+        rol: usuario.rol  
     },
         process.env.JWT_SECRET,
         { 
@@ -16,6 +17,46 @@ const generarToken = (usuario) => {
         });
 };
 
+// Servicio para el registro PÚBLICO de clientes estándar (rol: 'cliente')
+exports.registrarCliente = async function (data) {
+    try {
+        const { nombre, apellido, correo, telefono, password } = data;
+        const correoNormalizado = correo.toLowerCase().trim();
+
+        const existeUsuario = await User.findOne({ correo: correoNormalizado });
+        if (existeUsuario) {
+            throw new Error('Ya existe un usuario con ese correo electrónico.');
+        }
+
+        const contraseniaHasheada = await bcrypt.hash(password, 10);
+
+        const nuevoCliente = new User({
+            nombre,
+            apellido,
+            correo: correoNormalizado,
+            telefono,
+            password: contraseniaHasheada,
+            rol: 'cliente' // Forzamos explícitamente el rol de cliente
+        });
+
+        const clienteGuardado = await nuevoCliente.save();
+
+        const usuario = clienteGuardado.toObject();
+        delete usuario.password;
+
+        const token = generarToken(usuario);
+
+        return { usuario, token };
+    } catch (e) {
+        if (e.code === 11000 || e.message === 'Ya existe un usuario con ese correo electrónico.') {
+            throw new Error('Ya existe un usuario con ese correo electrónico.');
+        }
+        console.error('Error en el servicio de User (Cliente):', e);
+        throw new Error(e.message || 'Error al registrar el usuario en la base de datos');
+    }
+};
+
+// Servicio exclusivo para registrar administradores (rol: 'admin')
 exports.registrarAdmin = async function (data) {
     try {
         const { nombre, apellido, correo, telefono, password } = data;
@@ -33,7 +74,8 @@ exports.registrarAdmin = async function (data) {
             apellido,
             correo: correoNormalizado,
             telefono,
-            password: contraseniaHasheada
+            password: contraseniaHasheada,
+            rol: 'admin' // Forzamos explícitamente el rol de administrador
         });
 
         const adminGuardado = await nuevoAdmin.save();
@@ -45,11 +87,11 @@ exports.registrarAdmin = async function (data) {
 
         return { usuario, token };
     } catch (e) {
-        if (e.code === 11000) {
+        if (e.code === 11000 || e.message === 'Ya existe un administrador con ese correo electrónico.') {
             throw new Error('Ya existe un administrador con ese correo electrónico.');
         }
-        console.error('Error en el servicio de User:', e);
-        throw new Error('Error al registrar el administrador en la base de datos');
+        console.error('Error en el servicio de User (Admin):', e);
+        throw new Error(e.message || 'Error al registrar el administrador en la base de datos');
     }
 };
 

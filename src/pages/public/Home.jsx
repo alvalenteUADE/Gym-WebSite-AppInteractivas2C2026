@@ -170,7 +170,7 @@ function Home() {
           brandName="Fitness Gym"
           links={navigation}
           ctaLabel="Empezá hoy"
-          ctaHref="#planes"
+          ctaHref="/admin/login"
         />
 
         <main>

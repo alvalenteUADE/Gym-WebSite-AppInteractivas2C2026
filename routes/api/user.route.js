@@ -2,11 +2,15 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../../controllers/user.controller');
 const authMiddleware = require('../../middlewares/auth.middleware');
+const { verificarAdmin } = require('../../middlewares/role.middleware');
 
-// Registro de administrador
-router.post('/register', UserController.registrarAdmin);
+// 1. Registro PÚBLICO para clientes estándar
+router.post('/register', UserController.registrarCliente);
 
-// Inicio de sesión de administrador
+// 2. Registro PRIVADO de administradores (protegido: solo un admin logueado puede crear otro)
+router.post('/register-admin', authMiddleware, verificarAdmin, UserController.registrarAdmin);
+
+// Inicio de sesión (sirve para ambos roles; el token llevará incrustado su rol correspondiente)
 router.post('/login', UserController.loginAdmin);
 
 // Cierre de sesión de administrador (protegido)

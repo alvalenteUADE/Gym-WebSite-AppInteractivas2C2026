@@ -25,6 +25,11 @@ const UserSchema = new mongoose.Schema({
         required: true,
         select: false
     },
+    rol: {
+        type: String,
+        enum: ['admin', 'cliente'],
+        default: 'cliente' // Por defecto, todo registro público es cliente
+    },
     resetPasswordToken: {
         type: String,
         select: false
