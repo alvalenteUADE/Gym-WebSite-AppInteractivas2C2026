@@ -50,7 +50,13 @@ function Header({
             )}
           </Box>
 
-          <IconButton aria-label="Abrir menú" onClick={() => setIsMenuOpen(true)} sx={{ display: { xs: 'inline-flex', md: 'none' }, ml: 'auto' }}>
+          <IconButton 
+            aria-label="Abrir menú" 
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu-drawer"
+            onClick={() => setIsMenuOpen(!isMenuOpen)} 
+            sx={{ display: { xs: 'inline-flex', md: 'none' }, ml: 'auto' }}
+          >
             <Box component="span" className="header__menu-icon" aria-hidden="true">
               <span /><span /><span />
             </Box>
@@ -60,7 +66,7 @@ function Header({
 
       {/* Menú Mobile */}
       <Drawer anchor="right" open={isMenuOpen} onClose={closeMenu} slotProps={{ paper: { sx: { width: { xs: '100%', sm: 340 }, backgroundColor: 'background.default' } } }}>
-        <Box role="presentation" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100%', p: 3 }}>
+        <Box id="mobile-menu-drawer" role="presentation" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100%', p: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
             <Box component="span" className="header__brand-name">{brandName}</Box>
             <IconButton aria-label="Cerrar menú" onClick={closeMenu}><Box component="span" aria-hidden="true">×</Box></IconButton>

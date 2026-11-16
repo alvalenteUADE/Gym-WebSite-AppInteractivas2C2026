@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
     nombre: {
@@ -42,6 +43,30 @@ const UserSchema = new mongoose.Schema({
 {
     // Agregamos automáticamente la fecha de creación y actualización
     timestamps: true 
+});
+
+// Middleware PRE-SAVE: Hashea la contraseña automáticamente antes de guardarla en la BD
+UserSchema.pre('save', async function () {
+    // Si la contraseña no ha sido modificada, salimos
+    if (!this.isModified('password')) {
+        return;
+    }
+
+    try {
+        // Si ya viene hasheada (por seguridad extra), evitamos un doble hash
+        const esHashBcrypt = this.password && (
+            this.password.startsWith('$2a$') || 
+            this.password.startsWith('$2b$') || 
+            this.password.startsWith('$2$')
+        );
+
+        if (!esHashBcrypt) {
+            const salt = await bcrypt.genSalt(10);
+            this.password = await bcrypt.hash(this.password, salt);
+        }
+    } catch (error) {
+        throw error;
+    }
 });
 
 module.exports = mongoose.model('User', UserSchema);

@@ -1,5 +1,5 @@
-// Definimos la URL base de la API apuntando al servidor backend (puerto 4000)
-const API_URL = "http://localhost:4000/api/user";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api/user";
 
 export const registrarUsuarioService = async (datosRegistro) => {
   try {

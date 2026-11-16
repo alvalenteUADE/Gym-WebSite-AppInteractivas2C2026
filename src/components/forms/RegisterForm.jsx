@@ -38,19 +38,24 @@ export const RegisterForm = () => {
     try {
       const respuesta = await registrarUsuarioService(datosParaBackend);
       
-      if (respuesta.token) {
-        localStorage.setItem('token', respuesta.token);
+      const token = respuesta.data?.token || respuesta.token;
+      const usuario = respuesta.data?.usuario || respuesta.usuario;
+
+      if (token) {
+        localStorage.setItem('token', token);
+      }
+      if (usuario && usuario.rol) {
+        localStorage.setItem('rol', usuario.rol);
       }
 
-      setMensajeExito('¡Registro exitoso! Redirigiendo al inicio de sesión...');
+      setMensajeExito('¡Registro exitoso! Redirigiendo al inicio...');
       reset();
 
       setTimeout(() => {
-        navigate('/admin/login');
+        navigate('/');
       }, 1500);
 
     } catch (error) {
-      // Muestra exactamente el mensaje de error limpio que emite el backend/servicio
       setErrorBackend(error.message || "Hubo un error al registrarse en el servidor");
     } finally {
       setCargando(false);
@@ -91,6 +96,7 @@ export const RegisterForm = () => {
             id="nombre"
             type="text"
             aria-invalid={errors.nombre ? "true" : "false"}
+            aria-describedby={errors.nombre ? "nombre-error" : undefined}
             style={{ width: '100%', padding: '10px 12px', boxSizing: 'border-box', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-bg)', color: 'var(--color-ink)' }}
             {...register("nombre", {
               required: "El nombre es obligatorio",
@@ -101,7 +107,11 @@ export const RegisterForm = () => {
               }
             })}
           />
-          {errors.nombre && <p style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>{errors.nombre.message}</p>}
+          {errors.nombre && (
+            <p id="nombre-error" style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>
+              {errors.nombre.message}
+            </p>
+          )}
         </div>
 
         {/* Campo Apellido */}
@@ -111,6 +121,7 @@ export const RegisterForm = () => {
             id="apellido"
             type="text"
             aria-invalid={errors.apellido ? "true" : "false"}
+            aria-describedby={errors.apellido ? "apellido-error" : undefined}
             style={{ width: '100%', padding: '10px 12px', boxSizing: 'border-box', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-bg)', color: 'var(--color-ink)' }}
             {...register("apellido", {
               required: "El apellido es obligatorio",
@@ -121,7 +132,11 @@ export const RegisterForm = () => {
               }
             })}
           />
-          {errors.apellido && <p style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>{errors.apellido.message}</p>}
+          {errors.apellido && (
+            <p id="apellido-error" style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>
+              {errors.apellido.message}
+            </p>
+          )}
         </div>
 
         {/* Campo Correo Electrónico */}
@@ -131,6 +146,7 @@ export const RegisterForm = () => {
             id="email"
             type="email"
             aria-invalid={errors.email ? "true" : "false"}
+            aria-describedby={errors.email ? "email-error" : undefined}
             style={{ width: '100%', padding: '10px 12px', boxSizing: 'border-box', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-bg)', color: 'var(--color-ink)' }}
             {...register("email", {
               required: "El correo es obligatorio",
@@ -140,7 +156,11 @@ export const RegisterForm = () => {
               }
             })}
           />
-          {errors.email && <p style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>{errors.email.message}</p>}
+          {errors.email && (
+            <p id="email-error" style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>
+              {errors.email.message}
+            </p>
+          )}
         </div>
 
         {/* Campo Teléfono */}
@@ -150,6 +170,7 @@ export const RegisterForm = () => {
             id="telefono"
             type="tel"
             aria-invalid={errors.telefono ? "true" : "false"}
+            aria-describedby={errors.telefono ? "telefono-error" : undefined}
             style={{ width: '100%', padding: '10px 12px', boxSizing: 'border-box', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-bg)', color: 'var(--color-ink)' }}
             {...register("telefono", {
               required: "El teléfono es obligatorio",
@@ -159,7 +180,11 @@ export const RegisterForm = () => {
               }
             })}
           />
-          {errors.telefono && <p style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>{errors.telefono.message}</p>}
+          {errors.telefono && (
+            <p id="telefono-error" style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>
+              {errors.telefono.message}
+            </p>
+          )}
         </div>
 
         {/* Campo Contraseña */}
@@ -169,14 +194,18 @@ export const RegisterForm = () => {
             id="password"
             type="password"
             aria-invalid={errors.password ? "true" : "false"}
+            aria-describedby={errors.password ? "password-error" : undefined}
             style={{ width: '100%', padding: '10px 12px', boxSizing: 'border-box', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-bg)', color: 'var(--color-ink)' }}
             {...register("password", {
               required: "La contraseña es obligatoria",
               minLength: { value: 6, message: "Debe tener al menos 6 caracteres" }
             })}
-            
           />
-          {errors.password && <p style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>{errors.password.message}</p>}
+          {errors.password && (
+            <p id="password-error" style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         {/* Campo Confirmar Contraseña */}
@@ -186,13 +215,18 @@ export const RegisterForm = () => {
             id="confirmPassword"
             type="password"
             aria-invalid={errors.confirmPassword ? "true" : "false"}
+            aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
             style={{ width: '100%', padding: '10px 12px', boxSizing: 'border-box', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-bg)', color: 'var(--color-ink)' }}
             {...register("confirmPassword", {
               required: "Por favor confirma la contraseña",
               validate: value => value === passwordValue || "Las contraseñas no coinciden"
             })}
           />
-          {errors.confirmPassword && <p style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>{errors.confirmPassword.message}</p>}
+          {errors.confirmPassword && (
+            <p id="confirmPassword-error" style={{ color: '#d9534f', fontSize: '12px', marginTop: '4px' }}>
+              {errors.confirmPassword.message}
+            </p>
+          )}
         </div>
 
         <button 
@@ -215,14 +249,6 @@ export const RegisterForm = () => {
           {cargando ? 'Registrando...' : 'Registrarse'}
         </button>
       </form>
-
-      {/* Enlace alternativo para usuarios con cuenta */}
-      <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', color: 'var(--color-text)' }}>
-        ¿Ya tenés una cuenta?{' '}
-        <a href="/admin/login" style={{ color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'none' }}>
-          Iniciá sesión
-        </a>
-      </div>
     </div>
   );
 };

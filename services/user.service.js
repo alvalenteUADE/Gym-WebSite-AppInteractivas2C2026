@@ -104,6 +104,7 @@ exports.loginAdmin = async function (correo, password) {
             throw new Error('Correo o contraseña incorrectos.');
         }
 
+        // Validación estricta y segura con bcrypt.compare
         const passwordValida = await bcrypt.compare(password, admin.password);
         if (!passwordValida) {
             throw new Error('Correo o contraseña incorrectos.');

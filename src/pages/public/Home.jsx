@@ -157,6 +157,12 @@ const footerColumns = [
       },
     ],
   },
+  {
+    title: 'Gestión',
+    items: [
+      { label: 'Acceso Admin', href: '/admin/login' },
+    ],
+  },
 ]
 
 function Home() {
@@ -170,7 +176,7 @@ function Home() {
           brandName="Fitness Gym"
           links={navigation}
           ctaLabel="Empezá hoy"
-          ctaHref="/admin/login"
+          ctaHref="/register"
         />
 
         <main>
