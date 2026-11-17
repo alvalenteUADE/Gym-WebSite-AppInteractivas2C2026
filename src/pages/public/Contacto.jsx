@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Button from '../../components/ui/Button'
 import Section from '../../components/layout/Section'
-import { crearConsulta } from '../../mocks/consultas.mock'
+import { crearConsulta } from '../../services/consulta.service'
 import '../../styles/pages/Contacto.css'
 
 const contactDetails = [

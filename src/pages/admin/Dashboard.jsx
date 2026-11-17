@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -5,15 +6,10 @@ import MuiButton from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { Link } from 'react-router-dom'
 import Section from '../../components/layout/Section'
+import { useCategorias } from '../../hooks/useCategorias'
+import { useConsultas } from '../../hooks/useConsultas'
+import { usePublicaciones } from '../../hooks/usePublicaciones'
 import '../../styles/pages/Dashboard.css'
-
-
-const metricas = [
-  { id: 'publicaciones', valor: '20', label: 'Publicaciones', detalle: '18 activas · 2 dadas de baja' },
-  { id: 'categorias', valor: '5', label: 'Categorías', detalle: 'Todas con publicaciones asociadas' },
-  { id: 'consultas', valor: '7', label: 'Consultas pendientes', detalle: '3 leídas · 12 respondidas' },
-  { id: 'destacadas', valor: '4', label: 'Publicaciones destacadas', detalle: 'Visibles en la portada del sitio' },
-]
 
 const secciones = [
   {
@@ -69,6 +65,118 @@ const seccionesOrdenadas = [...secciones].sort((a, b) =>
 )
 
 function Dashboard() {
+  const {
+    publicaciones,
+    cargando: cargandoPublicaciones,
+    errorCarga: errorPublicaciones,
+  } = usePublicaciones()
+  const {
+    categorias,
+    cargando: cargandoCategorias,
+    errorCarga: errorCategorias,
+  } = useCategorias()
+  const {
+    consultas,
+    cargando: cargandoConsultas,
+    errorCarga: errorConsultas,
+  } = useConsultas()
+
+  const metricas = useMemo(() => {
+    const activas = publicaciones.filter((item) => item.activa).length
+    const dadasDeBaja = publicaciones.length - activas
+    const destacadas = publicaciones.filter((item) => item.destacada).length
+
+    const categoriasEnUso = new Set(
+      publicaciones
+        .map((item) => item.categoria?._id)
+        .filter(Boolean),
+    ).size
+    const categoriasSinUso = Math.max(categorias.length - categoriasEnUso, 0)
+
+    const pendientes = consultas.filter(
+      (item) => item.estado === 'Pendiente',
+    ).length
+    const leidas = consultas.filter((item) => item.estado === 'Leída').length
+    const respondidas = consultas.filter(
+      (item) => item.estado === 'Respondida',
+    ).length
+
+    const valor = (cargando, error, cantidad) => {
+      if (cargando) return '…'
+      if (error) return '—'
+
+      return String(cantidad)
+    }
+
+    const detalle = (cargando, error, texto) => {
+      if (cargando) return 'Cargando…'
+      if (error) return 'No se pudieron cargar'
+
+      return texto
+    }
+
+    return [
+      {
+        id: 'publicaciones',
+        valor: valor(
+          cargandoPublicaciones,
+          errorPublicaciones,
+          publicaciones.length,
+        ),
+        label: 'Publicaciones',
+        detalle: detalle(
+          cargandoPublicaciones,
+          errorPublicaciones,
+          `${activas} activas · ${dadasDeBaja} dadas de baja`,
+        ),
+      },
+      {
+        id: 'categorias',
+        valor: valor(cargandoCategorias, errorCategorias, categorias.length),
+        label: 'Categorías',
+        detalle: detalle(
+          cargandoCategorias,
+          errorCategorias,
+          `${categoriasEnUso} con publicaciones · ${categoriasSinUso} sin publicaciones`,
+        ),
+      },
+      {
+        id: 'consultas',
+        valor: valor(cargandoConsultas, errorConsultas, pendientes),
+        label: 'Consultas pendientes',
+        detalle: detalle(
+          cargandoConsultas,
+          errorConsultas,
+          `${leidas} leídas · ${respondidas} respondidas`,
+        ),
+      },
+      {
+        id: 'destacadas',
+        valor: valor(
+          cargandoPublicaciones,
+          errorPublicaciones,
+          destacadas,
+        ),
+        label: 'Publicaciones destacadas',
+        detalle: detalle(
+          cargandoPublicaciones,
+          errorPublicaciones,
+          `${destacadas} de ${publicaciones.length} publicaciones`,
+        ),
+      },
+    ]
+  }, [
+    publicaciones,
+    cargandoPublicaciones,
+    errorPublicaciones,
+    categorias,
+    cargandoCategorias,
+    errorCategorias,
+    consultas,
+    cargandoConsultas,
+    errorConsultas,
+  ])
+
   return (
     <>
       <Section
