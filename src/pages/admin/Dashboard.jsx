@@ -36,7 +36,7 @@ const secciones = [
   },
   {
     id: 'consultas',
-    to: null,
+    to: '/admin/consultas',
     tag: 'Contacto',
     titulo: 'Consultas',
     descripcion:

@@ -7,6 +7,7 @@ import { Register } from './pages/public/Register.jsx'
 import { Login } from './pages/admin/Login.jsx'
 import Dashboard from './pages/admin/Dashboard.jsx'
 import AdminCategorias from './pages/admin/AdminCategorias.jsx'
+import AdminConsultas from './pages/admin/AdminConsultas.jsx'
 import AdminPublicaciones from './pages/admin/AdminPublicaciones.jsx'
 import { ProtectedRouteAdmin } from './components/routes/ProtectedRouteAdmin.jsx' 
 
@@ -32,6 +33,7 @@ createRoot(document.getElementById('root')).render(
         >
           <Route index element={<Dashboard />} />
           <Route path="categorias" element={<AdminCategorias />} />
+          <Route path="consultas" element={<AdminConsultas />} />
           <Route path="publicaciones" element={<AdminPublicaciones />} />
 
           <Route path="*" element={<Navigate to="/admin" replace />} />

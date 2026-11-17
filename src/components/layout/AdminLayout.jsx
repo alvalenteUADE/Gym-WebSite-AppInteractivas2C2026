@@ -25,6 +25,7 @@ const enlaces = [
   { label: 'Inicio', to: '/admin', end: true },
   { label: 'Categorías', to: '/admin/categorias' },
   { label: 'Publicaciones', to: '/admin/publicaciones' },
+  { label: 'Consultas', to: '/admin/consultas' },
 ]
 
 const claseEnlace = ({ isActive }) =>
