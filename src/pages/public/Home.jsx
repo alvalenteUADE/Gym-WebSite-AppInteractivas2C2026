@@ -1,18 +1,14 @@
+import { useState, useEffect } from 'react'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
 import Footer from '../../components/layout/Footer'
 import Header from '../../components/layout/Header'
 import Hero from '../../components/layout/Hero'
-import Section from '../../components/layout/Section'
-import PlanCard from '../../components/ui/PlanCard'
-import ServiceCard from '../../components/ui/ServiceCard'
-import logo from '../../assets/logo/logo-icon.png'
-import heroImage from '../../assets/fondos/5.jpg'
-import strengthImage from '../../assets/equipo/1.jpg'
-import cardioImage from '../../assets/equipo/3.jpg'
-import personalImage from '../../assets/equipo/8.jpg'
 import Contacto from './Contacto'
 import theme from '../../theme'
+import { obtenerInstitucion } from '../../services/institution.service'
+import logo from '../../assets/logo/logo-icon.png'
+import heroImage from '../../assets/fondos/5.jpg'
 import '../../styles/base/tokens.css'
 import '../../styles/base/base.css'
 import '../../styles/pages/Home.css'
@@ -24,148 +20,98 @@ const navigation = [
   { label: 'Contacto', href: '#contacto' },
 ]
 
-const heroStats = [
-  { value: '7 a 23 h', label: 'Lunes a viernes' },
-  { value: '+20', label: 'Clases por semana' },
-  { value: '1 a 1', label: 'Entrenamiento personal' },
-]
-
-const services = [
-  {
-    tag: 'Sala principal',
-    title: 'Fuerza y musculación',
-    description:
-      'Rutinas progresivas y equipamiento completo para ganar fuerza con una técnica segura.',
-    image: strengthImage,
-    imageAlt: 'Socio entrenando con pesas en Fitness Gym',
-    href: '#planes',
-    linkLabel: 'Ver planes',
-  },
-  {
-    tag: 'Clases grupales',
-    title: 'Funcional y cardio',
-    description:
-      'Circuitos dinámicos y trabajo cardiovascular para mejorar tu resistencia y movilidad.',
-    image: cardioImage,
-    imageAlt: 'Entrenamiento cardiovascular en Fitness Gym',
-    href: '#planes',
-    linkLabel: 'Ver planes',
-  },
-  {
-    tag: 'Uno a uno',
-    title: 'Entrenamiento personal',
-    description:
-      'Un entrenador te acompaña con un plan adaptado a tus objetivos, tiempos y experiencia.',
-    image: personalImage,
-    imageAlt: 'Entrenador acompañando a un socio en Fitness Gym',
-    href: '#contacto',
-    linkLabel: 'Coordinar una entrevista',
-  },
-]
-
-const plans = [
-  {
-    name: 'Pase libre',
-    description:
-      'Para moverte a tu ritmo y usar el gimnasio cuando quieras.',
-    price: 'Consultar',
-    period: 'Valor mensual',
-    features: [
-      'Acceso a sala de musculación',
-      'Clases grupales',
-      'Horario extendido',
-      'Vestuarios y lockers',
-    ],
-    ctaLabel: 'Consultar disponibilidad',
-  },
-  {
-    name: 'Full',
-    description:
-      'El equilibrio entre libertad y acompañamiento para sostener tus resultados.',
-    price: 'Consultar',
-    period: 'Valor mensual',
-    features: [
-      'Todo lo del Pase libre',
-      'Plan de entrenamiento mensual',
-      'Seguimiento de progreso',
-      'Acceso a todas las clases',
-    ],
-    highlighted: true,
-    badge: 'Más elegido',
-    ctaLabel: 'Quiero este plan',
-  },
-  {
-    name: 'Personalizado',
-    description:
-      'Acompañamiento cercano para objetivos específicos y entrenamiento 1 a 1.',
-    price: 'A medida',
-    period: 'Según objetivos',
-    features: [
-      'Todo lo del plan Full',
-      'Entrenador personal',
-      'Asesoramiento nutricional',
-      'Plan adaptado a tus tiempos',
-    ],
-    ctaLabel: 'Hablar con el equipo',
-  },
-]
-
-const benefits = [
-  {
-    title: 'Equipamiento completo',
-    text: 'Sala de fuerza, cardio y espacio funcional.',
-  },
-  {
-    title: 'Entrenadores certificados',
-    text: 'Profesionales que te acompañan en cada etapa.',
-  },
-  {
-    title: 'Horario extendido',
-    text: 'Lunes a viernes de 7 a 23 h y sábados de 9 a 20 h.',
-  },
-]
-
-const footerColumns = [
-  {
-    title: 'Explorar',
-    items: [
-      { label: 'Inicio', href: '#inicio' },
-      { label: 'Actividades', href: '#actividades' },
-      { label: 'Planes', href: '#planes' },
-    ],
-  },
-  {
-    title: 'Contacto',
-    items: [
-      { label: 'Av. Corrientes 1234, CABA' },
-      { label: '011-4555-1234', href: 'tel:+541145551234' },
-      { label: 'Lun a Vie 7–23 h · Sáb 9–20 h' },
-    ],
-  },
-  {
-    title: 'Seguinos',
-    items: [
-      {
-        label: 'Instagram @fitnessgym',
-        href: 'https://www.instagram.com/fitnessgym',
-        external: true,
-      },
-      {
-        label: 'Facebook /fitnessgym',
-        href: 'https://www.facebook.com/fitnessgym',
-        external: true,
-      },
-    ],
-  },
-  {
-    title: 'Gestión',
-    items: [
-      { label: 'Acceso Admin', href: '/admin/login' },
-    ],
-  },
-]
-
 function Home() {
+  const [institucion, setInstitucion] = useState(null)
+
+  useEffect(() => {
+    const cargarDatosInstitucion = async () => {
+      try {
+        const data = await obtenerInstitucion()
+        if (data) {
+          setInstitucion(data)
+        }
+      } catch (error) {
+        console.error('Error al cargar la información institucional en el Home:', error)
+      }
+    }
+
+    cargarDatosInstitucion()
+  }, [])
+
+  // Datos dinámicos obtenidos de la BD con valores de respaldo (fallback)
+  const nombreGym = institucion?.nombre || 'Fitness Gym'
+  const direccionGym = institucion?.direccion || 'Av. Corrientes 1234, CABA'
+  const telefonoGym = institucion?.telefono || '011-4555-1234'
+  const descripcionGym = institucion?.descripcion || 'Un espacio para entrenar, progresar y sentirte mejor. Equipamiento, clases y acompañamiento profesional.'
+  const redesGym = institucion?.redes_sociales || institucion?.redesSociales || 'Instagram @fitnessgym'
+  
+  // Manejo flexible de horarios
+  const horariosCrudos = institucion?.horarios_atencion || institucion?.horariosAtencion
+  const horarioTexto = Array.isArray(horariosCrudos) ? horariosCrudos.join(' · ') : (horariosCrudos || 'De Lunes a Viernes, de 07:00 a 23:00 hs')
+
+  // Formateo exacto para que coincida con el estilo visual limpio (ej: "7 a 23 h" y "Lunes a viernes")
+  let diasHero = 'Lunes a viernes'
+  let horasHero = '7 a 23 h'
+
+  if (typeof horarioTexto === 'string' && horarioTexto.trim() !== '') {
+    const parteLunVie = horarioTexto.split(/[-·]/)[0].trim()
+    const subPartes = parteLunVie.split(',')
+    
+    if (subPartes.length >= 2) {
+      diasHero = subPartes[0].replace(/^de\s+/i, '').trim()
+      horasHero = subPartes.slice(1).join(',').trim()
+    } else {
+      horasHero = parteLunVie
+    }
+
+    // Limpieza de formato para las horas (remueve el "de" inicial, ":00" y cambia "hs"/"horas" por "h")
+    horasHero = horasHero
+      .replace(/^de\s+/i, '')
+      .replace(/:00/g, '')
+      .replace(/\bhs\.?/gi, 'h')
+      .replace(/\bhoras\b/gi, 'h')
+      .trim()
+
+    // Normalizamos la primera letra de los días en minúscula/mayúscula según el estándar visual
+    diasHero = diasHero.charAt(0).toUpperCase() + diasHero.slice(1).toLowerCase()
+  }
+
+  // Estadísticas del Hero con el formato visual exacto
+  const heroStats = [
+    { value: horasHero, label: diasHero },
+    { value: '+20', label: 'Clases por semana' },
+    { value: '1 a 1', label: 'Entrenamiento personal' },
+  ]
+
+  const footerColumns = [
+    {
+      title: 'Explorar',
+      items: [
+        { label: 'Inicio', href: '#inicio' },
+        { label: 'Actividades', href: '#actividades' },
+        { label: 'Planes', href: '#planes' },
+      ],
+    },
+    {
+      title: 'Contacto',
+      items: [
+        { label: direccionGym },
+        { label: telefonoGym, href: `tel:${telefonoGym.replace(/[^0-9+]/g, '')}` },
+        { label: horarioTexto },
+      ],
+    },
+    {
+      title: 'Seguinos',
+      items: [
+        {
+          label: redesGym,
+          href: 'https://www.instagram.com',
+          external: true,
+        },
+      ],
+    },
+  ]
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -173,18 +119,18 @@ function Home() {
       <div className="home">
         <Header
           logo={logo}
-          brandName="Fitness Gym"
+          brandName={nombreGym}
           links={navigation}
           ctaLabel="Empezá hoy"
-          ctaHref="/register"
+          ctaHref="#planes"
         />
 
         <main>
           <Hero
-            eyebrow="Fitness Gym · Av. Corrientes 1234"
+            eyebrow={`${nombreGym} · ${direccionGym}`}
             title="Entrená con propósito."
             highlight="Sentite mejor."
-            description="Equipamiento de última generación, clases grupales y entrenadores que te acompañan para que entrenar sea parte de tu rutina."
+            description={descripcionGym}
             primaryAction={{ label: 'Ver planes', href: '#planes' }}
             secondaryAction={{
               label: 'Conocer actividades',
@@ -194,19 +140,23 @@ function Home() {
             imageAlt="Sala de entrenamiento de Fitness Gym"
             badge={{
               label: 'Horarios',
-              value: 'Lun a Vie 7–23 h · Sáb 9–20 h',
+              value: horarioTexto,
             }}
             stats={heroStats}
           />
-          <Contacto />
+          <Contacto 
+            direccion={direccionGym}
+            telefono={telefonoGym}
+            horarios={horarioTexto}
+          />
         </main>
 
         <Footer
           logo={logo}
-          brandName="Fitness Gym"
-          description="Un espacio para entrenar, progresar y sentirte mejor. Equipamiento, clases y acompañamiento profesional."
+          brandName={nombreGym}
+          description={descripcionGym}
           columns={footerColumns}
-          bottomNote="Fitness Gym · Av. Corrientes 1234, CABA"
+          bottomNote={`${nombreGym} · ${direccionGym}`}
         />
       </div>
     </ThemeProvider>

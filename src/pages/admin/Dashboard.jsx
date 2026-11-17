@@ -41,7 +41,7 @@ const secciones = [
   },
   {
     id: 'institucion',
-    to: null,
+    to: '/admin/institucion',
     tag: 'Comercio',
     titulo: 'Información institucional',
     descripcion:

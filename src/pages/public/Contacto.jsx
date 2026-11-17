@@ -9,26 +9,26 @@ import Section from '../../components/layout/Section'
 import { crearConsulta } from '../../services/consulta.service'
 import '../../styles/pages/Contacto.css'
 
-const contactDetails = [
-  {
-    label: 'Visitanos',
-    value: 'Av. Corrientes 1234, CABA',
-  },
-  {
-    label: 'Llamanos',
-    value: '011-4555-1234',
-    href: 'tel:+541145551234',
-  },
-  {
-    label: 'Horarios',
-    value: 'Lunes a viernes de 7 a 23 h · Sábados de 9 a 20 h',
-  },
-]
-
-function Contacto() {
+function Contacto({ direccion, telefono, horarios }) {
   const [notice, setNotice] = useState(null)
   const [errors, setErrors] = useState({})
   const [enviando, setEnviando] = useState(false)
+
+  const contactDetails = [
+    {
+      label: 'Visitanos',
+      value: direccion || 'Av. Corrientes 1234, CABA',
+    },
+    {
+      label: 'Llamanos',
+      value: telefono || '011-4555-1234',
+      href: telefono ? `tel:${telefono.replace(/[^0-9+]/g, '')}` : 'tel:+541145551234',
+    },
+    {
+      label: 'Horarios',
+      value: horarios || 'Lunes a viernes de 7 a 23 h · Sábados de 9 a 20 h',
+    },
+  ]
 
   const handleSubmit = async (event) => {
     event.preventDefault()

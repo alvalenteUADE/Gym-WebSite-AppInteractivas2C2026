@@ -9,6 +9,7 @@ import Dashboard from './pages/admin/Dashboard.jsx'
 import AdminCategorias from './pages/admin/AdminCategorias.jsx'
 import AdminConsultas from './pages/admin/AdminConsultas.jsx'
 import AdminPublicaciones from './pages/admin/AdminPublicaciones.jsx'
+import { AdminInstitucion } from './pages/admin/AdminInstitucion.jsx' // <--- 1. IMPORTAMOS EL COMPONENTE
 import { ProtectedRouteAdmin } from './components/routes/ProtectedRouteAdmin.jsx' 
 
 createRoot(document.getElementById('root')).render(
@@ -35,6 +36,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="categorias" element={<AdminCategorias />} />
           <Route path="consultas" element={<AdminConsultas />} />
           <Route path="publicaciones" element={<AdminPublicaciones />} />
+          <Route path="institucion" element={<AdminInstitucion />} /> {/* <--- 2. AGREGAMOS LA RUTA ANIDADA */}
 
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
