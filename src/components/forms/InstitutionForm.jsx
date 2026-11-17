@@ -25,8 +25,10 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
       setValue('descripcion', institucionInicial.descripcion);
       setValue('direccion', institucionInicial.direccion);
       setValue('telefono', institucionInicial.telefono);
-      setValue('redesSociales', institucionInicial.redesSociales);
-      setHorariosList(Array.isArray(institucionInicial.horariosAtencion) ? institucionInicial.horariosAtencion : [institucionInicial.horariosAtencion]);
+      setValue('redesSociales', institucionInicial.redes_sociales || institucionInicial.redesSociales);
+      
+      const horarios = institucionInicial.horarios_atencion || institucionInicial.horariosAtencion;
+      setHorariosList(Array.isArray(horarios) ? horarios : [horarios]);
     } else {
       reset();
       setHorariosList([]);
@@ -36,7 +38,14 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
 
   const agregarHorario = () => {
     if (!diaInicio || !diaFin || !horaApertura || !horaCierre) return;
-    const nuevoBloque = `De ${diaInicio} a ${diaFin}, de ${horaApertura} a ${horaCierre} hs`;
+    
+    let nuevoBloque = '';
+    if (diaInicio === diaFin) {
+      nuevoBloque = `${diaInicio}, de ${horaApertura} a ${horaCierre} hs`;
+    } else {
+      nuevoBloque = `De ${diaInicio} a ${diaFin}, de ${horaApertura} a ${horaCierre} hs`;
+    }
+
     setHorariosList([...horariosList, nuevoBloque]);
     setErrorHorario('');
   };
@@ -54,13 +63,13 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
     setErrorHorario('');
 
     const institucionDatos = {
-      id: institucionInicial ? institucionInicial.id : Date.now(),
+      id: institucionInicial ? (institucionInicial._id || institucionInicial.id) : Date.now(),
       nombre: data.nombre,
       descripcion: data.descripcion,
       direccion: data.direccion,
       telefono: data.telefono,
-      redesSociales: data.redesSociales,
-      horariosAtencion: horariosList
+      redes_sociales: data.redesSociales,
+      horarios_atencion: horariosList.join(' - ')
     };
 
     if (institucionInicial && onUpdateInstitution) {
@@ -73,8 +82,8 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
   };
 
   return (
-    <div style={{ maxWidth: '480px', margin: '20px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#222' }}>
+    <div>
+      <h2 style={{ textAlign: 'left', marginBottom: '20px', color: '#222', fontSize: '20px', fontWeight: 'bold' }}>
         {institucionInicial ? 'Modificar Institución' : 'Registrar Institución'}
       </h2>
       
@@ -104,11 +113,7 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
             id="descripcion"
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box', resize: 'vertical', minHeight: '80px', border: '1px solid #ccc', borderRadius: '4px' }}
             {...register("descripcion", {
-              required: "La descripción es obligatoria",
-              pattern: {
-                value: /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s.,]+$/,
-                message: "No se permiten caracteres especiales"
-              }
+              required: "La descripción es obligatoria"
             })}
           />
           {errors.descripcion && <p style={{ color: 'red', fontSize: '12px', marginTop: '5px' }}>{errors.descripcion.message}</p>}
@@ -134,7 +139,7 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
 
         {/* Teléfono */}
         <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="telefono" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Teléfono (10 dígitos):</label>
+          <label htmlFor="telefono" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Teléfono:</label>
           <input
             id="telefono"
             type="text"
@@ -142,8 +147,8 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
             {...register("telefono", {
               required: "El teléfono es obligatorio",
               pattern: {
-                value: /^[0-9]{10}$/,
-                message: "Debe contener exactamente 10 números"
+                value: /^\+?(?=(?:\D*\d){8,15}\D*$)[0-9\s\-()]+$/,
+                message: "Ingrese un número de teléfono válido (entre 8 y 15 dígitos)"
               }
             })}
           />
@@ -152,7 +157,7 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
 
         {/* Redes Sociales */}
         <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="redesSociales" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Redes Sociales (Instagram / Web):</label>
+          <label htmlFor="redesSociales" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '14px' }}>Redes Sociales:</label>
           <input
             id="redesSociales"
             type="text"
@@ -224,7 +229,7 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
         </div>
 
         <button type="submit" style={{ width: '100%', padding: '12px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '15px' }}>
-          {institucionInicial ? 'Actualizar Institución' : 'Guardar Institución'}
+          {institucionInicial ? 'Guardar Cambios' : 'Guardar Institución'}
         </button>
       </form>
     </div>

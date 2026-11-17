@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -14,9 +14,9 @@ import { ThemeProvider } from '@mui/material/styles'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import Container from './Container'
 import Footer from './Footer'
-import { FOOTER_BRAND, FOOTER_COLUMNS } from '../../data/footer'
 import logo from '../../assets/logo/logo-icon.png'
 import theme from '../../theme'
+import { obtenerInstitucion } from '../../services/institution.service'
 import '../../styles/base/tokens.css'
 import '../../styles/base/base.css'
 import '../../styles/layout/AdminLayout.css'
@@ -26,6 +26,7 @@ const enlaces = [
   { label: 'Categorías', to: '/admin/categorias' },
   { label: 'Publicaciones', to: '/admin/publicaciones' },
   { label: 'Consultas', to: '/admin/consultas' },
+  { label: 'Institución', to: '/admin/institucion' },
 ]
 
 const claseEnlace = ({ isActive }) =>
@@ -33,8 +34,68 @@ const claseEnlace = ({ isActive }) =>
 
 function AdminLayout() {
   const [menuAbierto, setMenuAbierto] = useState(false)
+  const [institucion, setInstitucion] = useState(null)
+
+  useEffect(() => {
+    const cargarDatosInstitucion = async () => {
+      try {
+        const data = await obtenerInstitucion()
+        if (data) {
+          setInstitucion(data)
+        }
+      } catch (error) {
+        console.error('Error al cargar la información institucional en el AdminLayout:', error)
+      }
+    }
+
+    cargarDatosInstitucion()
+  }, [])
 
   const cerrarMenu = () => setMenuAbierto(false)
+
+  // Datos dinámicos con respaldo por defecto
+  const nombreGym = institucion?.nombre || 'Fitness Gym'
+  const direccionGym = institucion?.direccion || 'Av. Corrientes 1234, CABA'
+  const telefonoGym = institucion?.telefono || '011-4555-1234'
+  const descripcionGym = institucion?.descripcion || 'Un espacio para entrenar, progresar y sentirte mejor. Equipamiento, clases y acompañamiento profesional.'
+  const redesGym = institucion?.redes_sociales || institucion?.redesSociales || 'Instagram @fitnessgym'
+  
+  const horariosCrudos = institucion?.horarios_atencion || institucion?.horariosAtencion
+  const horarioTexto = Array.isArray(horariosCrudos) ? horariosCrudos.join(' · ') : (horariosCrudos || 'Lun a Vie 7–23 h · Sáb 9–20 h')
+
+  // Verificamos si la red social es una URL o un texto descriptivo para ajustar el enlace dinámicamente
+  const esUrlRed = typeof redesGym === 'string' && (redesGym.startsWith('http://') || redesGym.startsWith('https://'))
+  const hrefRed = esUrlRed ? redesGym : 'https://www.instagram.com'
+
+  // Columnas del footer para el panel de administración (sin la sección de Gestión / Acceso Admin)
+  const footerColumns = [
+    {
+      title: 'Explorar',
+      items: [
+        { label: 'Inicio', href: '#inicio' },
+        { label: 'Actividades', href: '#actividades' },
+        { label: 'Planes', href: '#planes' },
+      ],
+    },
+    {
+      title: 'Contacto',
+      items: [
+        { label: direccionGym },
+        { label: telefonoGym, href: `tel:${telefonoGym.replace(/[^0-9+]/g, '')}` },
+        { label: horarioTexto },
+      ],
+    },
+    {
+      title: 'Seguinos',
+      items: [
+        {
+          label: redesGym,
+          href: hrefRed,
+          external: true,
+        },
+      ],
+    },
+  ]
 
   return (
     <ThemeProvider theme={theme}>
@@ -60,7 +121,7 @@ function AdminLayout() {
                 />
                 <Box className="admin-nav__brand-text">
                   <Box component="span" className="admin-nav__brand-name">
-                    Fitness Gym
+                    {nombreGym}
                   </Box>
                   <Box component="span" className="admin-nav__brand-tag">
                     Panel de administración
@@ -213,13 +274,13 @@ function AdminLayout() {
           <Outlet />
         </main>
 
-        {/* Mismo pie que el sitio público: contenido compartido en data/footer */}
+        {/* Footer dinámico sincronizado con la base de datos (sin sección de gestión admin) */}
         <Footer
           logo={logo}
-          brandName={FOOTER_BRAND.brandName}
-          description={FOOTER_BRAND.description}
-          columns={FOOTER_COLUMNS}
-          bottomNote={FOOTER_BRAND.bottomNote}
+          brandName={nombreGym}
+          description={descripcionGym}
+          columns={footerColumns}
+          bottomNote={`${nombreGym} · ${direccionGym}`}
         />
       </div>
     </ThemeProvider>

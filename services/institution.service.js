@@ -1,5 +1,17 @@
 const Institution = require('../models/Institution.model');
 
+// Obtener la información institucional
+exports.obtenerInstitucion = async function () {
+    try {
+        // Búsqueda determinista ordenada por fecha de creación descendente para evitar ambigüedades
+        const institucion = await Institution.findOne().sort({ createdAt: -1 });
+        return institucion;
+    } catch (e) {
+        console.error('Error en el servicio de Institution al obtener:', e);
+        throw new Error('Error al obtener la información institucional de la base de datos');
+    }
+};
+
 exports.crearInstitucion = async function (data) {
     try {
         const nuevaInstitucion = new Institution(data);
@@ -17,11 +29,12 @@ exports.modificarInstitucion = async function (id, datosActualizados) {
             throw new Error('No se enviaron datos para actualizar');
         }
 
-        // Filtrar exclusivamente los campos permitidos para prevenir inyecciones de operadores de MongoDB
-        const { nombre, direccion, telefono, horarios_atencion, redes_sociales } = datosActualizados;
+        // Filtrar exclusivamente los campos permitidos (incluyendo descripcion)
+        const { nombre, descripcion, direccion, telefono, horarios_atencion, redes_sociales } = datosActualizados;
 
         const actualizacion = {};
         if (nombre !== undefined) actualizacion.nombre = nombre;
+        if (descripcion !== undefined) actualizacion.descripcion = descripcion;
         if (direccion !== undefined) actualizacion.direccion = direccion;
         if (telefono !== undefined) actualizacion.telefono = telefono;
         if (horarios_atencion !== undefined) actualizacion.horarios_atencion = horarios_atencion;

@@ -14,7 +14,7 @@
 
 module.exports = {
     nombre: 'Fitness Gym',
-    descripcion: 'Gimnasio con equipamiento de última generación, clases grupales, entrenadores personales y asesoramiento nutricional.',
+    descripcion: 'Un espacio para entrenar, progresar y sentirte mejor. Equipamiento, clases y acompañamiento profesional.',
     direccion: 'Av. Corrientes 1234, CABA',
     telefono: '011-4555-1234',
     redes_sociales: 'Instagram: @fitnessgym | Facebook: /fitnessgym',

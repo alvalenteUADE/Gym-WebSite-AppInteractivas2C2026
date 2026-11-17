@@ -1,5 +1,31 @@
 const InstitutionService = require('../services/institution.service');
 
+// Obtener la información institucional
+exports.obtenerInstitucion = async function (req, res) {
+    try {
+        // Como es una única institución para el comercio, buscamos la existente en la base de datos
+        const institucion = await InstitutionService.obtenerInstitucion();
+        
+        if (!institucion) {
+            return res.status(404).json({
+                status: 404,
+                message: "No se encontró información institucional cargada."
+            });
+        }
+
+        return res.status(200).json({
+            status: 200,
+            data: institucion,
+            message: "Información institucional obtenida exitosamente"
+        });
+    } catch (e) {
+        return res.status(500).json({
+            status: 500,
+            message: e.message || "Error interno al obtener la institución"
+        });
+    }
+};
+
 exports.crearInstitucion = async function (req, res) {
     const { nombre, descripcion, direccion, telefono, redes_sociales, horarios_atencion } = req.body;
     // Validación de campos requeridos
@@ -30,7 +56,7 @@ exports.crearInstitucion = async function (req, res) {
 
 exports.modificarInstitucion = async function (req, res) {
     try {
-        //Sacamos el ID de los parametros de la URL
+        // Sacamos el ID de los parametros de la URL
         const { id } = req.params;
         const datosAActualizar = req.body;
 
