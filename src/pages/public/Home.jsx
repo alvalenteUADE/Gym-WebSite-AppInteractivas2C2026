@@ -55,13 +55,21 @@ function Home() {
 
   if (typeof horarioTexto === 'string' && horarioTexto.trim() !== '') {
     const parteLunVie = horarioTexto.split(/[-·]/)[0].trim()
-    const subPartes = parteLunVie.split(',')
     
-    if (subPartes.length >= 2) {
+    // Verificamos si incluye coma (formato nuevo) o si usa espacio (formato seeder viejo)
+    if (parteLunVie.includes(',')) {
+      const subPartes = parteLunVie.split(',')
       diasHero = subPartes[0].replace(/^de\s+/i, '').trim()
       horasHero = subPartes.slice(1).join(',').trim()
     } else {
-      horasHero = parteLunVie
+      // Intento de rescate para formatos estilo seeder sin coma
+      const matchHora = parteLunVie.match(/\d{1,2}(?::\d{2})?/)
+      if (matchHora && matchHora.index > 0) {
+        diasHero = parteLunVie.substring(0, matchHora.index).replace(/^de\s+/i, '').trim()
+        horasHero = parteLunVie.substring(matchHora.index).trim()
+      } else {
+        horasHero = parteLunVie
+      }
     }
 
     // Limpieza de formato para las horas (remueve el "de" inicial, ":00" y cambia "hs"/"horas" por "h")
@@ -82,6 +90,10 @@ function Home() {
     { value: '+20', label: 'Clases por semana' },
     { value: '1 a 1', label: 'Entrenamiento personal' },
   ]
+
+  // Validación dinámica del enlace de redes sociales para evitar que apunte siempre a la home genérica
+  const esUrlRed = typeof redesGym === 'string' && (redesGym.startsWith('http://') || redesGym.startsWith('https://'))
+  const hrefRed = esUrlRed ? redesGym : 'https://www.instagram.com'
 
   const footerColumns = [
     {
@@ -105,9 +117,15 @@ function Home() {
       items: [
         {
           label: redesGym,
-          href: 'https://www.instagram.com',
+          href: hrefRed,
           external: true,
         },
+      ],
+    },
+    {
+      title: 'Gestión',
+      items: [
+        { label: 'Acceso Admin', href: '/admin/login' },
       ],
     },
   ]

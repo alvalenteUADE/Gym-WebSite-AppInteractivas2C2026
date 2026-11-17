@@ -63,6 +63,10 @@ function AdminLayout() {
   const horariosCrudos = institucion?.horarios_atencion || institucion?.horariosAtencion
   const horarioTexto = Array.isArray(horariosCrudos) ? horariosCrudos.join(' · ') : (horariosCrudos || 'Lun a Vie 7–23 h · Sáb 9–20 h')
 
+  // Verificamos si la red social es una URL o un texto descriptivo para ajustar el enlace dinámicamente
+  const esUrlRed = typeof redesGym === 'string' && (redesGym.startsWith('http://') || redesGym.startsWith('https://'))
+  const hrefRed = esUrlRed ? redesGym : 'https://www.instagram.com'
+
   // Columnas del footer para el panel de administración (sin la sección de Gestión / Acceso Admin)
   const footerColumns = [
     {
@@ -86,7 +90,7 @@ function AdminLayout() {
       items: [
         {
           label: redesGym,
-          href: 'https://www.instagram.com',
+          href: hrefRed,
           external: true,
         },
       ],

@@ -68,7 +68,7 @@ export const AdminInstitucion = () => {
       setInstitucion(respuesta.institucion || respuesta.data || respuesta);
       setMostrarFormulario(false);
       mostrarAlertaTemporal('¡Información institucional modificada con éxito!');
-      cargarDatosInstitucion(); // <--- Recargamos los datos frescos de la BD
+      cargarDatosInstitucion(); 
     } catch (err) {
       setErrorBackend(err.message || 'Error al actualizar la institución.');
     }
@@ -81,7 +81,7 @@ export const AdminInstitucion = () => {
   return (
     <div style={{ padding: '30px 40px', maxWidth: '1200px', margin: '0 auto', position: 'relative' }}>
       
-      {/* Cabecera limpia sin el botón de Nueva institución */}
+      {/* Cabecera limpia */}
       <div style={{ marginBottom: '25px' }}>
         <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#111', margin: '0 0 8px 0' }}>Institución</h1>
         <p style={{ color: '#666', fontSize: '15px', margin: 0 }}>
@@ -102,10 +102,28 @@ export const AdminInstitucion = () => {
         </div>
       )}
 
-      {/* Tarjeta de visualización principal */}
+      {/* Tarjeta de visualización principal o estado vacío con acción de creación */}
       {!institucion ? (
         <div style={{ textAlign: 'center', padding: '40px', backgroundColor: '#fff', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
           <p style={{ color: '#666', marginBottom: '15px' }}>No se encontró información institucional cargada en el sistema.</p>
+          <button
+            onClick={() => {
+              setModoFormulario('crear');
+              setMostrarFormulario(true);
+            }}
+            style={{
+              backgroundColor: '#28a745',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '20px',
+              padding: '8px 20px',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              cursor: 'pointer'
+            }}
+          >
+            Registrar Institución
+          </button>
         </div>
       ) : (
         <div style={{ backgroundColor: '#fff', borderRadius: '12px', border: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', padding: '30px' }}>
@@ -117,7 +135,7 @@ export const AdminInstitucion = () => {
                 Institución Activa
               </span>
               
-              {/* Botón Modificar: Permite actualizar los datos de la institución activa */}
+              {/* Botón Modificar */}
               <button
                 onClick={() => {
                   setModoFormulario('modificar');

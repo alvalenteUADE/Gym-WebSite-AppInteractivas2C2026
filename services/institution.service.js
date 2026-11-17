@@ -3,8 +3,8 @@ const Institution = require('../models/Institution.model');
 // Obtener la información institucional
 exports.obtenerInstitucion = async function () {
     try {
-        // Al ser una entidad institucional única, buscamos el primer registro disponible
-        const institucion = await Institution.findOne();
+        // Búsqueda determinista ordenada por fecha de creación descendente para evitar ambigüedades
+        const institucion = await Institution.findOne().sort({ createdAt: -1 });
         return institucion;
     } catch (e) {
         console.error('Error en el servicio de Institution al obtener:', e);
@@ -34,7 +34,7 @@ exports.modificarInstitucion = async function (id, datosActualizados) {
 
         const actualizacion = {};
         if (nombre !== undefined) actualizacion.nombre = nombre;
-        if (descripcion !== undefined) actualizacion.descripcion = descripcion; // <--- ¡Campo agregado correctamente!
+        if (descripcion !== undefined) actualizacion.descripcion = descripcion;
         if (direccion !== undefined) actualizacion.direccion = direccion;
         if (telefono !== undefined) actualizacion.telefono = telefono;
         if (horarios_atencion !== undefined) actualizacion.horarios_atencion = horarios_atencion;

@@ -41,7 +41,7 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
     
     let nuevoBloque = '';
     if (diaInicio === diaFin) {
-      nuevoBloque = `${diaInicio}s, de ${horaApertura} a ${horaCierre} hs`;
+      nuevoBloque = `${diaInicio}, de ${horaApertura} a ${horaCierre} hs`;
     } else {
       nuevoBloque = `De ${diaInicio} a ${diaFin}, de ${horaApertura} a ${horaCierre} hs`;
     }
@@ -147,8 +147,8 @@ export const InstitutionForm = ({ institucionInicial, onInstitutionCreated, onUp
             {...register("telefono", {
               required: "El teléfono es obligatorio",
               pattern: {
-                value: /^\+?[0-9\s\-()]{8,15}$/,
-                message: "Ingrese un número de teléfono válido (ej: +541145551234)"
+                value: /^\+?(?=(?:\D*\d){8,15}\D*$)[0-9\s\-()]+$/,
+                message: "Ingrese un número de teléfono válido (entre 8 y 15 dígitos)"
               }
             })}
           />
