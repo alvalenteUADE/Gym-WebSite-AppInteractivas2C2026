@@ -11,11 +11,9 @@
 
 const mongoose = require('mongoose');
 
-const User = require('../../models/User.model');
 const Institution = require('../../models/Institution.model');
 const Category = require('../../models/Category.model');
 const Publicacion = require('../../models/Publicacion.model');
-const TokenBlacklist = require('../../models/TokenBlacklist.model');
 const Consulta = require('../../models/Consulta.model');
 
 // Colecciones que se vacían en cada corrida del seed.
@@ -23,9 +21,7 @@ const COLECCIONES_A_LIMPIAR = [
     Publicacion,
     Category,
     Institution,
-    Consulta,
-    User,
-    TokenBlacklist
+    Consulta
 ];
 
 async function limpiarBaseDeDatos(log) {

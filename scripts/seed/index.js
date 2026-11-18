@@ -26,6 +26,7 @@ const usuarios = require('./data/usuarios');
 const institucion = require('./data/institucion');
 const categorias = require('./data/categorias');
 const publicaciones = require('./data/publicaciones');
+const consultas = require('./data/consultas');
 
 // ---------- Helpers de log ----------
 const log = {
@@ -63,18 +64,29 @@ async function cargarUsuarios() {
     let token = null;
 
     for (const usuario of usuarios) {
-        const respuesta = await api.post('/api/user/register', usuario);
+        const registro = await api.post('/api/user/register', usuario);
 
-        if (respuesta.status === 201) {
+        if (registro.status === 201) {
             log.ok(`Registrado: ${usuario.correo}`);
-            if (!token) token = respuesta.body.data.token;
+            if (!token) token = registro.body.data.token;
+            continue;
+        }
+
+        const login = await api.post('/api/user/login', {
+            correo: usuario.correo,
+            password: usuario.password
+        });
+
+        if (login.status === 200) {
+            log.ok(`Ya existía: ${usuario.correo}`);
+            if (!token) token = login.body.data.token;
         } else {
-            log.error(`${usuario.correo}: ${respuesta.body?.message || respuesta.status}`);
+            log.error(`${usuario.correo}: ${registro.body?.message || registro.status}`);
         }
     }
 
     if (!token) {
-        throw new Error('No se pudo registrar ningún administrador. Revisar data/usuarios.js');
+        throw new Error('No se pudo registrar ni autenticar ningún administrador. Revisar data/usuarios.js');
     }
 
     return token;
@@ -145,6 +157,40 @@ async function cargarPublicaciones(token, categoriasPorNombre) {
 }
 
 // ============================================================
+// PASO 6: consultas del formulario de contacto
+// Se crean por el endpoint público y después se les ajusta el
+// estado, que no se puede fijar en el alta.
+// ============================================================
+async function cargarConsultas(token) {
+    log.titulo(`Consultas (${consultas.length})`);
+
+    for (const consulta of consultas) {
+        const { estado, ...datos } = consulta;
+
+        const respuesta = await api.post('/api/consulta/create', datos);
+
+        if (respuesta.status !== 201) {
+            log.error(`${datos.asunto}: ${respuesta.body?.message || respuesta.status}`);
+            continue;
+        }
+
+        if (!estado || estado === 'Pendiente') {
+            log.ok(`Creada: ${datos.asunto} (Pendiente)`);
+            continue;
+        }
+
+        const id = respuesta.body.data._id;
+        const cambio = await api.put(`/api/consulta/${id}/estado`, { estado }, { token });
+
+        if (cambio.status === 200) {
+            log.ok(`Creada: ${datos.asunto} (${estado})`);
+        } else {
+            log.error(`${datos.asunto}: no se pudo marcar como ${estado} (${cambio.body?.message || cambio.status})`);
+        }
+    }
+}
+
+// ============================================================
 // EJECUCIÓN
 // Para agregar un paso nuevo (ej: institución, consultas),
 // crear su función arriba y sumarla acá en el orden correcto.
@@ -157,6 +203,7 @@ async function cargarPublicaciones(token, categoriasPorNombre) {
         await cargarInstitucion(token);
         const categoriasPorNombre = await cargarCategorias(token);
         await cargarPublicaciones(token, categoriasPorNombre);
+        await cargarConsultas(token);
 
         console.log('\nSeed finalizado.\n');
         process.exit(0);

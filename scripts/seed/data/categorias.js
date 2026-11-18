@@ -13,6 +13,7 @@
 module.exports = [
     { nombre: 'Musculación' },
     { nombre: 'Cardio' },
+    { nombre: 'Clases grupales' },
     { nombre: 'Entrenamiento personal' },
     { nombre: 'Nutrición y suplementos' }
 ];

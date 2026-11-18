@@ -1,0 +1,38 @@
+.publico {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--color-bg, #f7f8f4);
+  color: var(--color-text, #55615b);
+  font-family: var(--font-sans, system-ui, sans-serif);
+  text-align: left;
+}
+
+.publico *,
+.publico *::before,
+.publico *::after {
+  box-sizing: border-box;
+}
+
+.publico :where(h1, h2, h3, p) {
+  margin: 0;
+}
+
+.publico :where(ul) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.publico :where(img) {
+  max-width: 100%;
+}
+
+.publico [id] {
+  scroll-margin-top: 92px;
+}
+
+.publico main {
+  flex: 1;
+}
