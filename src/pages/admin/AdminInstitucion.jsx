@@ -1,11 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { InstitutionForm } from '../../components/forms/InstitutionForm';
+import { obtenerInstitucion, crearInstitucion, actualizarInstitucion } from '../../services/institution.service';
 
 export const AdminInstitucion = () => {
-  const [instituciones, setInstituciones] = useState([]);
-  const [institucionAEditar, setInstitucionAEditar] = useState(null);
+  const [institucion, setInstitucion] = useState(null);
+  const [cargando, setCargando] = useState(true);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [modoFormulario, setModoFormulario] = useState('modificar');
   const [mensajeExito, setMensajeExito] = useState('');
+  const [errorBackend, setErrorBackend] = useState('');
+
+  useEffect(() => {
+    cargarDatosInstitucion();
+  }, []);
+
+  // Bloquea el scroll de la página principal cuando el modal está abierto
+  useEffect(() => {
+    if (mostrarFormulario) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mostrarFormulario]);
+
+  const cargarDatosInstitucion = async () => {
+    try {
+      setCargando(true);
+      setErrorBackend('');
+      const data = await obtenerInstitucion();
+      setInstitucion(data);
+    } catch (err) {
+      setErrorBackend('No se pudo cargar la información institucional del servidor.');
+    } finally {
+      setCargando(false);
+    }
+  };
 
   const mostrarAlertaTemporal = (texto) => {
     setMensajeExito(texto);
@@ -14,113 +46,219 @@ export const AdminInstitucion = () => {
     }, 3000);
   };
 
-  const guardarInstitucion = (nuevaInst) => {
-    setInstituciones([...instituciones, nuevaInst]);
-    setMostrarFormulario(false);
-    setInstitucionAEditar(null);
-    mostrarAlertaTemporal('¡Institución registrada con éxito!');
+  const handleCreateInstitution = async (nuevaInst) => {
+    try {
+      setErrorBackend('');
+      const respuesta = await crearInstitucion(nuevaInst);
+      setInstitucion(respuesta.data || respuesta);
+      setMostrarFormulario(false);
+      mostrarAlertaTemporal('¡Institución creada con éxito!');
+      cargarDatosInstitucion();
+    } catch (err) {
+      setErrorBackend(err.message || 'Error al crear la institución.');
+    }
   };
 
-  const actualizarInstitucion = (instActualizada) => {
-    setInstituciones(instituciones.map(inst => inst.id === instActualizada.id ? instActualizada : inst));
-    setInstitucionAEditar(null);
-    setMostrarFormulario(false);
-    mostrarAlertaTemporal('¡Institución modificada con éxito!');
+  const handleUpdateInstitution = async (instActualizada) => {
+    try {
+      setErrorBackend('');
+      const idInstitucion = institucion._id || institucion.id;
+      const respuesta = await actualizarInstitucion(idInstitucion, instActualizada);
+      
+      setInstitucion(respuesta.institucion || respuesta.data || respuesta);
+      setMostrarFormulario(false);
+      mostrarAlertaTemporal('¡Información institucional modificada con éxito!');
+      cargarDatosInstitucion(); 
+    } catch (err) {
+      setErrorBackend(err.message || 'Error al actualizar la institución.');
+    }
   };
 
-  const iniciarEdicion = (inst) => {
-    setInstitucionAEditar(inst);
-    setMostrarFormulario(true);
-  };
-
-  const abrirRegistroNuevo = () => {
-    setInstitucionAEditar(null);
-    setMostrarFormulario(true);
-  };
+  if (cargando) {
+    return <div style={{ textAlign: 'center', padding: '50px', fontSize: '16px' }}>Cargando información institucional...</div>;
+  }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Administración de Instituciones</h1>
+    <div style={{ padding: '30px 40px', maxWidth: '1200px', margin: '0 auto', position: 'relative' }}>
       
-      {/* Cartel de éxito flotante accesible */}
+      {/* Cabecera limpia */}
+      <div style={{ marginBottom: '25px' }}>
+        <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#111', margin: '0 0 8px 0' }}>Institución</h1>
+        <p style={{ color: '#666', fontSize: '15px', margin: 0 }}>
+          Información general del gimnasio, datos de contacto, horarios y redes sociales visibles en el sitio.
+        </p>
+      </div>
+
+      {/* Alertas de éxito o error */}
       {mensajeExito && (
-        <div role="status" aria-live="polite" style={{ padding: '12px', marginBottom: '20px', backgroundColor: '#d4edda', color: '#155724', border: '1px solid #c3e6cb', borderRadius: '6px', textAlign: 'center', fontWeight: 'bold' }}>
+        <div role="status" aria-live="polite" style={{ padding: '12px 16px', marginBottom: '20px', backgroundColor: '#d4edda', color: '#155724', border: '1px solid #c3e6cb', borderRadius: '8px', fontWeight: 'bold' }}>
           {mensajeExito}
         </div>
       )}
 
-      {/* Si el formulario está activo, ocultamos el listado */}
-      {mostrarFormulario ? (
-        <div style={{ maxWidth: '480px', margin: '0 auto', marginBottom: '30px' }}>
-          <InstitutionForm 
-            institucionInicial={institucionAEditar}
-            onInstitutionCreated={guardarInstitucion} 
-            onUpdateInstitution={actualizarInstitucion}
-          />
-          <button 
-            onClick={() => { setMostrarFormulario(false); setInstitucionAEditar(null); }}
-            style={{ marginTop: '10px', width: '100%', padding: '8px', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+      {errorBackend && (
+        <div role="alert" style={{ padding: '12px 16px', marginBottom: '20px', backgroundColor: '#f8d7da', color: '#721c24', border: '1px solid #f5c6cb', borderRadius: '8px', fontWeight: 'bold' }}>
+          {errorBackend}
+        </div>
+      )}
+
+      {/* Tarjeta de visualización principal o estado vacío con acción de creación */}
+      {!institucion ? (
+        <div style={{ textAlign: 'center', padding: '40px', backgroundColor: '#fff', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
+          <p style={{ color: '#666', marginBottom: '15px' }}>No se encontró información institucional cargada en el sistema.</p>
+          <button
+            onClick={() => {
+              setModoFormulario('crear');
+              setMostrarFormulario(true);
+            }}
+            style={{
+              backgroundColor: '#28a745',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '20px',
+              padding: '8px 20px',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              cursor: 'pointer'
+            }}
           >
-            Cancelar
+            Registrar Institución
           </button>
         </div>
       ) : (
-        <div>
-          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-            <button 
-              onClick={abrirRegistroNuevo}
-              style={{ padding: '12px 24px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '15px' }}
-            >
-              + Registrar Nueva Institución
-            </button>
+        <div style={{ backgroundColor: '#fff', borderRadius: '12px', border: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', padding: '30px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eee', paddingBottom: '15px', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
+            <h3 style={{ margin: 0, fontSize: '22px', color: '#222' }}>{institucion.nombre}</h3>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ backgroundColor: '#e2f0cb', color: '#386641', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
+                Institución Activa
+              </span>
+              
+              {/* Botón Modificar */}
+              <button
+                onClick={() => {
+                  setModoFormulario('modificar');
+                  setMostrarFormulario(true);
+                }}
+                style={{
+                  backgroundColor: '#f8f9fa',
+                  color: '#28a745',
+                  border: '1px solid #28a745',
+                  borderRadius: '20px',
+                  padding: '6px 18px',
+                  fontWeight: 'bold',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Modificar
+              </button>
+            </div>
           </div>
 
-          <div>
-            {/* El título con el contador solo se muestra si hay al menos una institución */}
-            {instituciones.length > 0 && (
-              <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>
-                Instituciones Registradas ({instituciones.length})
-              </h2>
-            )}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+            <div>
+              <p style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#888', fontWeight: 'bold' }}>DESCRIPCIÓN</p>
+              <p style={{ margin: 0, fontSize: '15px', color: '#333' }}>{institucion.descripcion}</p>
+            </div>
+            <div>
+              <p style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#888', fontWeight: 'bold' }}>DIRECCIÓN</p>
+              <p style={{ margin: 0, fontSize: '15px', color: '#333' }}>{institucion.direccion}</p>
+            </div>
+            <div>
+              <p style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#888', fontWeight: 'bold' }}>TELÉFONO</p>
+              <p style={{ margin: 0, fontSize: '15px', color: '#333' }}>{institucion.telefono}</p>
+            </div>
+            <div>
+              <p style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#888', fontWeight: 'bold' }}>REDES SOCIALES</p>
+              <p style={{ margin: 0, fontSize: '15px', color: '#333' }}>
+                {institucion.redes_sociales || institucion.redesSociales || 'No especificadas'}
+              </p>
+            </div>
+          </div>
 
-            {instituciones.length === 0 ? (
-              <p style={{ textAlign: 'center', color: '#666' }}>Aún no se ha registrado ninguna institución.</p>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px', justifyContent: 'center' }}>
-                {instituciones.map((inst) => (
-                  <div key={inst.id} style={{ border: '1px solid #ddd', borderRadius: '10px', padding: '20px', backgroundColor: '#fff', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-                    <h3 style={{ margin: '0 0 10px 0', color: '#222' }}>{inst.nombre}</h3>
-                    <p style={{ margin: '8px 0', color: '#555', fontSize: '14px' }}><strong>Descripción:</strong> {inst.descripcion}</p>
-                    <p style={{ margin: '8px 0', color: '#555', fontSize: '14px' }}><strong>Dirección:</strong> {inst.direccion}</p>
-                    <p style={{ margin: '8px 0', color: '#555', fontSize: '14px' }}><strong>Teléfono:</strong> {inst.telefono}</p>
-                    <p style={{ margin: '8px 0', color: '#555', fontSize: '14px' }}><strong>Redes:</strong> {inst.redesSociales || 'No especificadas'}</p>
-                    
-                    <div style={{ margin: '8px 0', color: '#555', fontSize: '14px' }}>
-                      <strong>Horarios:</strong>
-                      {Array.isArray(inst.horariosAtencion) ? (
-                        <ul style={{ margin: '4px 0 0 0', paddingLeft: '20px' }}>
-                          {inst.horariosAtencion.map((bloque, index) => (
-                            <li key={index}>{bloque}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p style={{ margin: '4px 0 0 0' }}>{inst.horariosAtencion}</p>
-                      )}
-                    </div>
+          <div style={{ borderTop: '1px solid #eee', paddingTop: '15px' }}>
+            <p style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#888', fontWeight: 'bold' }}>HORARIOS DE ATENCIÓN</p>
+            {(() => {
+              const horarios = institucion.horarios_atencion || institucion.horariosAtencion;
+              return Array.isArray(horarios) ? (
+                <ul style={{ margin: 0, paddingLeft: '20px', color: '#333', fontSize: '14px' }}>
+                  {horarios.map((bloque, index) => (
+                    <li key={index} style={{ marginBottom: '4px' }}>{bloque}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p style={{ margin: 0, color: '#333', fontSize: '14px' }}>{horarios || 'No especificados'}</p>
+              );
+            })()}
+          </div>
+        </div>
+      )}
 
-                    <button 
-                      onClick={() => iniciarEdicion(inst)}
-                      style={{ marginTop: '15px', width: '100%', padding: '8px', backgroundColor: '#ffc107', color: '#000', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
-                    >
-                      Editar Institución
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+      {/* Ventana Modal Flotante */}
+      {mostrarFormulario && (
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setMostrarFormulario(false);
+            }
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 9999,
+            padding: '40px 20px'
+          }}
+        >
+          <div style={{
+            backgroundColor: '#fff',
+            padding: '30px',
+            borderRadius: '12px',
+            border: 'none',
+            boxShadow: '0 12px 32px rgba(0,0,0,0.25)',
+            width: '100%',
+            maxWidth: '600px',
+            maxHeight: '85vh',
+            overflowY: 'auto',
+            marginTop: '30px'
+          }}>
+            <InstitutionForm 
+              institucionInicial={modoFormulario === 'modificar' ? institucion : null}
+              onInstitutionCreated={handleCreateInstitution}
+              onUpdateInstitution={handleUpdateInstitution}
+            />
+            
+            <button 
+              type="button"
+              onClick={() => setMostrarFormulario(false)}
+              style={{ 
+                marginTop: '15px', 
+                width: '100%', 
+                padding: '10px', 
+                backgroundColor: '#6c757d', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: '6px', 
+                cursor: 'pointer', 
+                fontWeight: 'bold' 
+              }}
+            >
+              Cancelar
+            </button>
           </div>
         </div>
       )}
     </div>
   );
 };
+
+export default AdminInstitucion;

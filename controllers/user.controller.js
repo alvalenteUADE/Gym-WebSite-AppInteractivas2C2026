@@ -1,5 +1,35 @@
 const UserService = require('../services/user.service');
 
+// Controlador para el registro PÚBLICO de clientes estándar
+exports.registrarCliente = async function (req, res) {
+    const { nombre, apellido, correo, telefono, password } = req.body;
+
+    if (!nombre || !apellido || !correo || !telefono || !password) {
+        return res.status(400).json({
+            status: 400,
+            message: "Faltan campos requeridos. Asegúrese de enviar nombre, apellido, correo, telefono y password."
+        });
+    }
+
+    try {
+        const resultado = await UserService.registrarCliente(req.body);
+
+        console.log(`¡Éxito! Se registró el cliente: ${resultado.usuario.correo}`);
+
+        return res.status(201).json({
+            status: 201,
+            data: resultado,
+            message: "Usuario registrado exitosamente"
+        });
+    } catch (e) {
+        return res.status(400).json({
+            status: 400,
+            message: e.message
+        });
+    }
+};
+
+// Controlador exclusivo para registrar administradores
 exports.registrarAdmin = async function (req, res) {
     const { nombre, apellido, correo, telefono, password } = req.body;
 

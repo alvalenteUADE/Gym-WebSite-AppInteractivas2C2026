@@ -2,17 +2,18 @@
 // STORE EN MEMORIA DE LOS MOCKS
 // ------------------------------------------------------------
 // Única fuente de verdad mientras no haya backend conectado.
-// Lo comparten categorias.mock.js y publicaciones.mock.js, así
-// las dos pantallas ven lo mismo: si una publicación usa una
-// categoría, la pantalla de categorías ve ese uso y no deja
-// borrarla (igual que la guarda de category.service.js).
+// Lo comparten categorias.mock.js, publicaciones.mock.js y
+// consultas.mock.js, así las pantallas ven lo mismo: si una
+// publicación usa una categoría, la pantalla de categorías ve
+// ese uso y no deja borrarla (igual que la guarda de
+// category.service.js).
 //
 // Los datos replican el seed real (scripts/seed/data/) para que
 // la UI se pruebe con el volumen que va a tener en producción:
 // 20 publicaciones, que es el mínimo que pide la consigna.
 //
 // Al integrar el backend, este archivo se borra junto con los
-// dos .mock.js que lo usan.
+// .mock.js que lo usan.
 // ============================================================
 
 export const LATENCIA_MS = 350
@@ -58,8 +59,87 @@ let publicaciones = [
   { _id: 'pub-20', nombre: 'Creatina monohidrato 300 g', descripcion: 'Creatina micronizada de pureza farmacéutica, envase de 300 gramos.', categoria: 'cat-5', imagenes: [img('photo-1579722821273-0f6c7d44362f')], precio: 18500, disponible: false, activa: false, destacada: false },
 ]
 
+// Consultas recibidas desde el formulario de contacto. Los datos
+// replican el modelo Consulta del backend, con estados y fechas.
+let consultas = [
+  {
+    _id: 'consulta-01',
+    nombre: 'Lucía Fernández',
+    correo: 'lucia.fernandez@gmail.com',
+    telefono: '11 5555-1234',
+    asunto: 'Consulta por el abono mensual',
+    mensaje:
+      'Hola, quería saber si el abono mensual de musculación incluye las clases grupales o si se pagan aparte. También me interesa saber si hay promoción por pago trimestral. Gracias.',
+    estado: 'Pendiente',
+    createdAt: '2026-11-16T18:42:00.000Z',
+    updatedAt: '2026-11-16T18:42:00.000Z',
+  },
+  {
+    _id: 'consulta-02',
+    nombre: 'Martín Aguirre',
+    correo: 'martin.aguirre@hotmail.com',
+    telefono: '',
+    asunto: 'Horarios de la sala de musculación',
+    mensaje:
+      'Buenas, ¿me podrían confirmar los horarios de la sala de musculación los sábados? Quiero empezar la semana que viene y necesito organizarme con el trabajo.',
+    estado: 'Pendiente',
+    createdAt: '2026-11-16T12:15:00.000Z',
+    updatedAt: '2026-11-16T12:15:00.000Z',
+  },
+  {
+    _id: 'consulta-03',
+    nombre: 'Sofía Ramírez',
+    correo: 'sofia.ramirez@gmail.com',
+    telefono: '11 4444-9087',
+    asunto: 'Clase de prueba de Pilates',
+    mensaje:
+      'Hola, nunca hice Pilates y me gustaría probar una clase antes de anotarme. ¿Hay clases para principiantes? ¿Puedo ir a una de prueba?',
+    estado: 'Leída',
+    createdAt: '2026-11-15T20:08:00.000Z',
+    updatedAt: '2026-11-16T09:30:00.000Z',
+  },
+  {
+    _id: 'consulta-04',
+    nombre: 'Diego Pereyra',
+    correo: 'diego.pereyra@yahoo.com',
+    telefono: '11 6666-4321',
+    asunto: 'Entrenamiento personal',
+    mensaje:
+      'Quisiera información sobre el pack de ocho sesiones de personal training. ¿Se puede pagar en cuotas? ¿El entrenador se asigna según el objetivo?',
+    estado: 'Respondida',
+    createdAt: '2026-11-14T15:25:00.000Z',
+    updatedAt: '2026-11-15T11:10:00.000Z',
+  },
+  {
+    _id: 'consulta-05',
+    nombre: 'Camila Rojas',
+    correo: 'camila.rojas@gmail.com',
+    telefono: '',
+    asunto: 'Disponibilidad de la consulta nutricional',
+    mensaje:
+      'Hola, me interesa la consulta con nutricionista deportivo. ¿Atienden los miércoles por la tarde? ¿Incluye plan alimentario y seguimiento?',
+    estado: 'Pendiente',
+    createdAt: '2026-11-13T17:55:00.000Z',
+    updatedAt: '2026-11-13T17:55:00.000Z',
+  },
+  {
+    _id: 'consulta-06',
+    nombre: 'Nicolás Benítez',
+    correo: 'nico.benitez@gmail.com',
+    telefono: '11 3333-7788',
+    asunto: 'Facturación del abono trimestral',
+    mensaje:
+      'Buen día, necesito saber si emiten factura A para el abono trimestral y cómo se solicita. Gracias.',
+    estado: 'Respondida',
+    createdAt: '2026-11-12T10:40:00.000Z',
+    updatedAt: '2026-11-12T14:20:00.000Z',
+  },
+]
+
 // Lecturas: devuelven copias para que nadie mute el store por accidente.
 export const leerCategorias = () => categorias.map((c) => ({ ...c }))
+
+export const leerConsultas = () => consultas.map((c) => ({ ...c }))
 
 export const leerPublicaciones = () => publicaciones.map((p) => ({ ...p }))
 
@@ -70,6 +150,10 @@ export const escribirCategorias = (siguiente) => {
 
 export const escribirPublicaciones = (siguiente) => {
   publicaciones = siguiente
+}
+
+export const escribirConsultas = (siguiente) => {
+  consultas = siguiente
 }
 
 // Equivale al countDocuments({ categoria: id }) de category.service.js.
