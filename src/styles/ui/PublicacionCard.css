@@ -44,10 +44,10 @@
   justify-content: center;
   background: linear-gradient(
     135deg,
-    var(--color-accent, #b9e8c9),
+    var(--color-accent, #63f271),
     var(--color-surface-alt, #edf0e8)
   );
-  color: var(--color-primary, #174d37);
+  color: var(--color-primary, #169923);
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -87,7 +87,7 @@
 }
 
 .pub-card__category {
-  color: var(--color-primary, #174d37);
+  color: var(--color-primary, #169923);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -127,7 +127,7 @@
 }
 
 .pub-card__price-empty {
-  color: var(--color-primary, #174d37);
+  color: var(--color-primary, #169923);
   font-size: 0.95rem;
   font-weight: 700;
 }

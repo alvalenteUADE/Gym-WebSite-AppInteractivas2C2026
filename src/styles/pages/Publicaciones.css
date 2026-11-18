@@ -1,3 +1,13 @@
+.pubs {
+  background:
+    radial-gradient(
+      circle at 88% 8%,
+      rgba(82, 246, 79, 0.42),
+      transparent 34%
+    ),
+    var(--color-bg, #f7f8f4);
+}
+
 .pubs__filtros {
   display: flex;
   flex-wrap: wrap;

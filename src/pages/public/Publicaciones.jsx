@@ -111,6 +111,7 @@ function Publicaciones() {
   return (
     <Section
       id="publicaciones"
+      className="pubs"
       eyebrow="Nuestras propuestas"
       title="Productos y servicios"
       description="Abonos, clases y asesoramiento para que encuentres la forma de entrenar que mejor te funcione."

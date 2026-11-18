@@ -80,7 +80,7 @@
 
 .navbar__link:focus-visible,
 .navbar__brand:focus-visible {
-  outline: 2px solid var(--color-primary, #174d37);
+  outline: 2px solid var(--color-primary, #169923);
   outline-offset: 3px;
   border-radius: 4px;
 }

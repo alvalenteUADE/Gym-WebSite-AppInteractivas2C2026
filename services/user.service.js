@@ -266,3 +266,11 @@ exports.modificarAdmin = async function (id, datosActualizados) {
         throw e;
     }
 };
+exports.contarClientes = async function () {
+    try {
+        return await User.countDocuments({ rol: 'cliente' });
+    } catch (e) {
+        console.error('Error en el servicio de User al contar clientes:', e);
+        throw new Error('Error al contar los clientes registrados');
+    }
+};

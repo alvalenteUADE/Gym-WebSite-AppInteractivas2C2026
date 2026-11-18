@@ -68,11 +68,22 @@ async function cargarUsuarios() {
         await mongoose.connect(MONGO_URI);
     }
 
+    let creados = 0;
+    let existentes = 0;
+
     for (let i = 0; i < usuarios.length; i++) {
         const datosUsuario = usuarios[i];
+        const rolAsignado = datosUsuario.rol || (i === 0 ? 'admin' : 'cliente');
+
         try {
-            // El primer usuario será 'admin', los siguientes 'cliente'
-            const rolAsignado = i === 0 ? 'admin' : 'cliente';
+            // Los usuarios no se borran entre corridas: si ya está, se deja como está
+            const yaExiste = await User.findOne({ correo: datosUsuario.correo.toLowerCase().trim() });
+
+            if (yaExiste) {
+                existentes += 1;
+                log.ok(`Ya existía (${yaExiste.rol}): ${datosUsuario.correo}`);
+                continue;
+            }
 
             const nuevoUsuario = new User({
                 ...datosUsuario,
@@ -80,15 +91,27 @@ async function cargarUsuarios() {
             });
 
             await nuevoUsuario.save(); // Dispara el hash de contraseña del modelo
+            creados += 1;
             log.ok(`Creado en DB (${rolAsignado}): ${datosUsuario.correo}`);
         } catch (error) {
-            log.error(`${datosUsuario.correo}: ${error.message}`);
+            // El índice único puede saltar si dos corridas coinciden en el tiempo
+            if (error.code === 11000) {
+                existentes += 1;
+                log.ok(`Ya existía: ${datosUsuario.correo}`);
+            } else {
+                log.error(`${datosUsuario.correo}: ${error.message}`);
+            }
         }
     }
 
+    const totalClientes = await User.countDocuments({ rol: 'cliente' });
+    const totalAdmins = await User.countDocuments({ rol: 'admin' });
+    log.ok(`Resumen: ${creados} creado(s), ${existentes} ya existente(s) · en la base hay ${totalAdmins} admin(s) y ${totalClientes} cliente(s)`);
+
     // Generamos el token de administrador directamente usando el ID real de la base de datos
     try {
-        const adminUser = await User.findOne({ correo: usuarios[0].correo });
+        const correoAdmin = (usuarios.find((u) => u.rol === 'admin') || usuarios[0]).correo;
+        const adminUser = await User.findOne({ correo: correoAdmin.toLowerCase().trim(), rol: 'admin' });
         
         if (!adminUser) {
             throw new Error('No se encontró al usuario administrador en la base de datos.');

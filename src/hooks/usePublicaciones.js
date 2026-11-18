@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import * as api from '../mocks/publicaciones.mock'
+import * as api from '../services/publicacion.service'
 
 const MSG_ERROR_GENERICO = 'Ocurrió un error inesperado.'
 

@@ -6,7 +6,7 @@ import MuiButton from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { Link } from 'react-router-dom'
 import Section from '../../components/layout/Section'
-import { useCategorias } from '../../hooks/useCategorias'
+import { useClientes } from '../../hooks/useClientes'
 import { useConsultas } from '../../hooks/useConsultas'
 import { usePublicaciones } from '../../hooks/usePublicaciones'
 import '../../styles/pages/Dashboard.css'
@@ -71,27 +71,20 @@ function Dashboard() {
     errorCarga: errorPublicaciones,
   } = usePublicaciones()
   const {
-    categorias,
-    cargando: cargandoCategorias,
-    errorCarga: errorCategorias,
-  } = useCategorias()
-  const {
     consultas,
     cargando: cargandoConsultas,
     errorCarga: errorConsultas,
   } = useConsultas()
+  const {
+    total: totalClientes,
+    cargando: cargandoClientes,
+    errorCarga: errorClientes,
+  } = useClientes()
 
   const metricas = useMemo(() => {
     const activas = publicaciones.filter((item) => item.activa).length
     const dadasDeBaja = publicaciones.length - activas
     const destacadas = publicaciones.filter((item) => item.destacada).length
-
-    const categoriasEnUso = new Set(
-      publicaciones
-        .map((item) => item.categoria?._id)
-        .filter(Boolean),
-    ).size
-    const categoriasSinUso = Math.max(categorias.length - categoriasEnUso, 0)
 
     const pendientes = consultas.filter(
       (item) => item.estado === 'Pendiente',
@@ -131,13 +124,15 @@ function Dashboard() {
         ),
       },
       {
-        id: 'categorias',
-        valor: valor(cargandoCategorias, errorCategorias, categorias.length),
-        label: 'Categorías',
+        id: 'clientes',
+        valor: valor(cargandoClientes, errorClientes, totalClientes),
+        label: 'Clientes registrados',
         detalle: detalle(
-          cargandoCategorias,
-          errorCategorias,
-          `${categoriasEnUso} con publicaciones · ${categoriasSinUso} sin publicaciones`,
+          cargandoClientes,
+          errorClientes,
+          totalClientes === 1
+            ? 'Cuenta creada desde el sitio'
+            : 'Cuentas creadas desde el sitio',
         ),
       },
       {
@@ -169,12 +164,12 @@ function Dashboard() {
     publicaciones,
     cargandoPublicaciones,
     errorPublicaciones,
-    categorias,
-    cargandoCategorias,
-    errorCategorias,
     consultas,
     cargandoConsultas,
     errorConsultas,
+    totalClientes,
+    cargandoClientes,
+    errorClientes,
   ])
 
   return (

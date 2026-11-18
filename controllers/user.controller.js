@@ -193,3 +193,19 @@ exports.modificarAdmin = async function (req, res) {
         });
     }
 };
+exports.contarClientes = async function (req, res) {
+    try {
+        const total = await UserService.contarClientes();
+
+        return res.status(200).json({
+            status: 200,
+            data: { total },
+            message: "Cantidad de clientes obtenida exitosamente"
+        });
+    } catch (e) {
+        return res.status(400).json({
+            status: 400,
+            message: e.message
+        });
+    }
+};

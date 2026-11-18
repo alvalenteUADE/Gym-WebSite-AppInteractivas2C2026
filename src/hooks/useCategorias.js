@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import * as api from '../mocks/categorias.mock'
+import * as api from '../services/categoria.service'
 
 const MSG_ERROR_GENERICO = 'Ocurrió un error inesperado.'
 
