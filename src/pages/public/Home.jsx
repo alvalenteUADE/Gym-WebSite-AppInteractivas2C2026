@@ -122,12 +122,6 @@ function Home() {
         },
       ],
     },
-    {
-      title: 'Gestión',
-      items: [
-        { label: 'Acceso Admin', href: '/admin/login' },
-      ],
-    },
   ]
 
   return (
@@ -140,7 +134,7 @@ function Home() {
           brandName={nombreGym}
           links={navigation}
           ctaLabel="Empezá hoy"
-          ctaHref="/publicaciones"
+          ctaHref="#planes"
         />
 
         <main>
@@ -149,7 +143,11 @@ function Home() {
             title="Entrená con propósito."
             highlight="Sentite mejor."
             description={descripcionGym}
-            primaryAction={{ label: 'Empezá hoy', href: '/publicaciones' }}
+            primaryAction={{ label: 'Ver planes', href: '#planes' }}
+            secondaryAction={{
+              label: 'Conocer actividades',
+              href: '#actividades',
+            }}
             image={heroImage}
             imageAlt="Sala de entrenamiento de Fitness Gym"
             badge={{
