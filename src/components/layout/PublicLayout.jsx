@@ -82,10 +82,6 @@ function PublicLayout() {
         },
       ],
     },
-    {
-      title: 'Gestión',
-      items: [{ label: 'Acceso Admin', href: '/admin/login' }],
-    },
   ]
 
   return (
