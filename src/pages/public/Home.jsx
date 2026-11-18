@@ -134,7 +134,7 @@ function Home() {
           brandName={nombreGym}
           links={navigation}
           ctaLabel="Empezá hoy"
-          ctaHref="#planes"
+          ctaHref="/publicaciones"
         />
 
         <main>
@@ -143,11 +143,7 @@ function Home() {
             title="Entrená con propósito."
             highlight="Sentite mejor."
             description={descripcionGym}
-            primaryAction={{ label: 'Ver planes', href: '#planes' }}
-            secondaryAction={{
-              label: 'Conocer actividades',
-              href: '#actividades',
-            }}
+            primaryAction={{ label: 'Empezá hoy', href: '/publicaciones' }}
             image={heroImage}
             imageAlt="Sala de entrenamiento de Fitness Gym"
             badge={{
