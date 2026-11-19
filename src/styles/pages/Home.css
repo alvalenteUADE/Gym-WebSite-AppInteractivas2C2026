@@ -62,6 +62,36 @@
   transform: translateX(4px);
 }
 
+.home__map {
+  overflow: hidden;
+  border: 1px solid var(--color-border, #dfe4da);
+  border-radius: var(--radius-lg, 24px);
+  background: var(--color-surface-alt, #edf0e8);
+  box-shadow: var(--shadow-sm, 0 10px 30px rgba(14, 27, 20, 0.05));
+  margin: 15px 0;
+}
+
+.home__map-frame {
+  display: block;
+  width: 100%;
+  height: clamp(280px, 42vw, 460px);
+  border: 0;
+}
+
+.home__map-link {
+  display: flex;
+  margin: clamp(24px, 3vw, 32px) auto 0;
+}
+
+.home__map-link span {
+  margin-left: 8px;
+  transition: transform var(--transition, 180ms ease);
+}
+
+.home__map-link:hover span {
+  transform: translate(2px, -2px);
+}
+
 .home__benefits {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

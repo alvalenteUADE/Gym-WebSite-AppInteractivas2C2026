@@ -196,6 +196,10 @@ function Home() {
   const esUrlRed = typeof redesGym === 'string' && (redesGym.startsWith('http://') || redesGym.startsWith('https://'))
   const hrefRed = esUrlRed ? redesGym : 'https://www.instagram.com'
 
+  const direccionCodificada = encodeURIComponent(direccionGym)
+  const mapaEmbedUrl = `https://www.google.com/maps?q=${direccionCodificada}&output=embed`
+  const mapaUrl = `https://www.google.com/maps/search/?api=1&query=${direccionCodificada}`
+
   const footerColumns = [
     {
       title: 'Explorar',
@@ -300,6 +304,35 @@ function Home() {
             horarios={horarioTexto}
             consultaPredefinida={consultaPlan}
           />
+
+          <Section
+            id="ubicacion"
+            eyebrow="Ubicación"
+            title="Encontranos fácil."
+            description={`Estamos en ${direccionGym}. Mirá el mapa y acercate cuando quieras.`}
+          >
+            <div className="home__map">
+              <iframe
+                className="home__map-frame"
+                title={`Ubicación de ${nombreGym} en el mapa`}
+                src={mapaEmbedUrl}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            </div>
+
+            <Button
+              className="home__map-link"
+              href={mapaUrl}
+              variant="secondary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Cómo llegar
+              <span aria-hidden="true">↗</span>
+            </Button>
+          </Section>
         </main>
 
         <Footer
