@@ -18,6 +18,7 @@ function PlanCard({
   badge,
   ctaLabel = 'Consultar',
   ctaHref = '#contacto',
+  onCtaClick,
   className = '',
 }) {
   const classes = [
@@ -106,6 +107,7 @@ function PlanCard({
         <Button
           className="plan-card__cta"
           href={ctaHref}
+          onClick={onCtaClick}
           variant={highlighted ? 'light' : 'secondary'}
           fullWidth
           aria-label={`${ctaLabel} - Plan ${name}`}
