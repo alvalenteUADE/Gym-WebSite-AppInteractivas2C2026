@@ -9,10 +9,23 @@ import Section from '../../components/layout/Section'
 import { crearConsulta } from '../../services/consulta.service'
 import '../../styles/pages/Contacto.css'
 
-function Contacto({ direccion, telefono, horarios }) {
+function Contacto({ direccion, telefono, horarios, consultaPredefinida }) {
   const [notice, setNotice] = useState(null)
   const [errors, setErrors] = useState({})
   const [enviando, setEnviando] = useState(false)
+  const [valores, setValores] = useState({
+    asunto: consultaPredefinida?.asunto ?? '',
+    mensaje: consultaPredefinida?.mensaje ?? '',
+  })
+  const [consultaAnterior, setConsultaAnterior] = useState(consultaPredefinida)
+
+  if (consultaPredefinida !== consultaAnterior) {
+    setConsultaAnterior(consultaPredefinida)
+    setValores({
+      asunto: consultaPredefinida?.asunto ?? '',
+      mensaje: consultaPredefinida?.mensaje ?? '',
+    })
+  }
 
   const contactDetails = [
     {
@@ -69,6 +82,7 @@ function Contacto({ direccion, telefono, horarios }) {
       })
 
       form.reset()
+      setValores({ asunto: '', mensaje: '' })
       setNotice({
         severity: 'success',
         texto:
@@ -181,6 +195,13 @@ function Contacto({ direccion, telefono, horarios }) {
             <TextField
               label="Asunto"
               name="asunto"
+              value={valores.asunto}
+              onChange={(event) =>
+                setValores((actuales) => ({
+                  ...actuales,
+                  asunto: event.target.value,
+                }))
+              }
               required
               error={Boolean(errors.asunto)}
               helperText={errors.asunto}
@@ -191,6 +212,13 @@ function Contacto({ direccion, telefono, horarios }) {
               className="contact__message"
               label="Mensaje"
               name="mensaje"
+              value={valores.mensaje}
+              onChange={(event) =>
+                setValores((actuales) => ({
+                  ...actuales,
+                  mensaje: event.target.value,
+                }))
+              }
               multiline
               minRows={5}
               required
