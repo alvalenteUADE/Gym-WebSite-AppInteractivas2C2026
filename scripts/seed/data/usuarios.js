@@ -19,6 +19,14 @@ module.exports = [
         rol: 'admin'
     },
     {
+        nombre: 'Juan',
+        apellido: 'Fortez',
+        correo: 'juan.fortez@gymfitness.com',
+        telefono: '1178493203',
+        password: 'Admin1234',
+        rol: 'admin'
+    },
+    {
         nombre: 'María',
         apellido: 'González',
         correo: 'maria.gonzalez@gymfitness.com',
