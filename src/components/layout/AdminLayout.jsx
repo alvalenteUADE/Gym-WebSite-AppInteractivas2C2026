@@ -191,7 +191,10 @@ function AdminLayout() {
                 aria-label="Abrir menú"
                 aria-controls="admin-navigation"
                 aria-expanded={menuAbierto}
-                onClick={() => setMenuAbierto(true)}
+                onClick={(e) => {
+                  e.currentTarget.blur()
+                  setMenuAbierto(true)
+                }}
                 sx={{ display: { xs: 'inline-flex', md: 'none' }, ml: 'auto' }}
               >
                 <Box
