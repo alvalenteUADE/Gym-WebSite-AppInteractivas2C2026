@@ -50,7 +50,7 @@ const secciones = [
   },
   {
     id: 'perfil',
-    to: null,
+    to: '/admin/perfil',
     tag: 'Cuenta',
     titulo: 'Mi perfil',
     descripcion:
@@ -58,7 +58,6 @@ const secciones = [
     accion: 'Editar perfil',
   },
 ]
-
 
 const seccionesOrdenadas = [...secciones].sort((a, b) =>
   a.titulo.localeCompare(b.titulo, 'es'),
@@ -219,7 +218,6 @@ function Dashboard() {
                 <Typography component="p" className="admin__card-description">
                   {seccion.descripcion}
                 </Typography>
-                {/* Las secciones sin pantalla todavía quedan deshabilitadas */}
                 {seccion.to ? (
                   <MuiButton
                     component={Link}

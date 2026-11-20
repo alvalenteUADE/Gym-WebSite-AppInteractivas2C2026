@@ -11,16 +11,16 @@ import Dashboard from './pages/admin/Dashboard.jsx'
 import AdminCategorias from './pages/admin/AdminCategorias.jsx'
 import AdminConsultas from './pages/admin/AdminConsultas.jsx'
 import AdminPublicaciones from './pages/admin/AdminPublicaciones.jsx'
-import { AdminInstitucion } from './pages/admin/AdminInstitucion.jsx' // <--- 1. IMPORTAMOS EL COMPONENTE
+import { AdminInstitucion } from './pages/admin/AdminInstitucion.jsx'
+import Perfil from './pages/admin/Perfil.jsx'
 import { ProtectedRouteAdmin } from './components/routes/ProtectedRouteAdmin.jsx'
-import ScrollToHash from './components/routes/ScrollToHash.jsx' 
+import ScrollToHash from './components/routes/ScrollToHash.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <ScrollToHash />
       <Routes>
-       
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
 
@@ -32,8 +32,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/admin/login" element={<Login />} />
 
         {/* Panel de administración protegido con el Rol de Admin */}
-        <Route 
-          path="/admin" 
+        <Route
+          path="/admin"
           element={
             <ProtectedRouteAdmin>
               <AdminLayout />
@@ -44,7 +44,8 @@ createRoot(document.getElementById('root')).render(
           <Route path="categorias" element={<AdminCategorias />} />
           <Route path="consultas" element={<AdminConsultas />} />
           <Route path="publicaciones" element={<AdminPublicaciones />} />
-          <Route path="institucion" element={<AdminInstitucion />} /> {/* <--- 2. AGREGAMOS LA RUTA ANIDADA */}
+          <Route path="institucion" element={<AdminInstitucion />} />
+          <Route path="perfil" element={<Perfil />} />
 
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
