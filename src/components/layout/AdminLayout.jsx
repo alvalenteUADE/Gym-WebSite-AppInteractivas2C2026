@@ -11,11 +11,12 @@ import MuiButton from '@mui/material/Button'
 import Toolbar from '@mui/material/Toolbar'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import Container from './Container'
 import Footer from './Footer'
 import logo from '../../assets/logo/logo-icon.png'
 import theme from '../../theme'
+import { cerrarSesionService } from '../../services/auth.service'
 import { obtenerInstitucion } from '../../services/institution.service'
 import '../../styles/base/tokens.css'
 import '../../styles/base/base.css'
@@ -35,6 +36,7 @@ const claseEnlace = ({ isActive }) =>
 function AdminLayout() {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [institucion, setInstitucion] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const cargarDatosInstitucion = async () => {
@@ -52,6 +54,18 @@ function AdminLayout() {
   }, [])
 
   const cerrarMenu = () => setMenuAbierto(false)
+
+  const cerrarSesion = async () => {
+    cerrarMenu()
+
+    try {
+      await cerrarSesionService()
+    } catch (error) {
+      console.error('Error al cerrar la sesión:', error)
+    } finally {
+      navigate('/admin/login', { replace: true })
+    }
+  }
 
   // Datos dinámicos con respaldo por defecto
   const nombreGym = institucion?.nombre || 'Fitness Gym'
@@ -166,6 +180,10 @@ function AdminLayout() {
                 <MuiButton component={Link} to="/" size="small">
                   Ver el sitio
                 </MuiButton>
+
+                <MuiButton size="small" onClick={cerrarSesion}>
+                  Cerrar sesión
+                </MuiButton>
               </Box>
 
               <IconButton
@@ -266,6 +284,10 @@ function AdminLayout() {
               onClick={cerrarMenu}
             >
               Ver el sitio
+            </MuiButton>
+
+            <MuiButton fullWidth sx={{ mt: 1 }} onClick={cerrarSesion}>
+              Cerrar sesión
             </MuiButton>
           </Box>
         </Drawer>

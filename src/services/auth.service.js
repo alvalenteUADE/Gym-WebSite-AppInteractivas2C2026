@@ -47,3 +47,25 @@ export const loginUsuarioService = async (credenciales) => {
     throw error;
   }
 };
+
+export const cerrarSesionService = async () => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await fetch(`${API_URL}/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.message || "Error al cerrar la sesión");
+    }
+  } finally {
+    localStorage.removeItem("token");
+    localStorage.removeItem("rol");
+  }
+};
