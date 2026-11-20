@@ -209,6 +209,22 @@ exports.restablecerPassword = async function (token, nuevaPassword) {
     }
 };
 
+exports.obtenerPerfil = async function (id) {
+    try {
+        const usuario = await User.findById(id)
+            .select('-password -resetPasswordToken -resetPasswordExpires');
+
+        if (!usuario) {
+            throw new Error('No se encontró el administrador con ese ID');
+        }
+
+        return usuario;
+    } catch (e) {
+        console.error('Error en el servicio de User al obtener el perfil:', e);
+        throw e;
+    }
+};
+
 exports.modificarAdmin = async function (id, datosActualizados) {
     try {
         if (!datosActualizados || Object.keys(datosActualizados).length === 0) {

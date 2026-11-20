@@ -22,7 +22,7 @@ A través de esta herramienta, el administrador podrá mantener la información 
 - Iniciar sesión y obtener un token JWT válido por 24 horas.
 - Cerrar sesión revocando el token, de modo que el mismo quede inutilizable aunque no haya expirado.
 - Recuperar la contraseña mediante un token temporal que expira pasado cierto tiempo.
-- Modificar los datos del perfil del administrador autenticado.
+- Visualizar y modificar los datos del perfil del administrador autenticado.
 - Evitar correos duplicados al registrar un administrador.
 
 ### Gestión de publicaciones

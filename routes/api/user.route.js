@@ -25,6 +25,8 @@ router.post('/reset-password', UserController.restablecerPassword);
 // Modificación de datos personales (protegido con token JWT)
 router.get('/clientes/count', authMiddleware, verificarAdmin, UserController.contarClientes);
 
+router.get('/profile', authMiddleware, UserController.obtenerPerfil);
+
 router.put('/profile', authMiddleware, UserController.modificarAdmin);
 
 module.exports = router;

@@ -8,47 +8,66 @@ import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { Link } from 'react-router-dom'
 import Section from '../../components/layout/Section'
-import { modificarPerfil } from '../../services/usuario.service'
+import { modificarPerfil, obtenerPerfil } from '../../services/usuario.service'
 
 const NOMBRE_REGEX = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]+$/
 const TELEFONO_REGEX = /^\+?[0-9\s()-]+$/
+const CAMPOS = ['nombre', 'apellido', 'correo', 'telefono']
+const PERFIL_VACIO = {
+  nombre: '',
+  apellido: '',
+  correo: '',
+  telefono: '',
+}
 
-function leerUsuarioStorage() {
-  for (const clave of ['usuario', 'user', 'admin']) {
-    const raw = localStorage.getItem(clave)
-    if (!raw) continue
-    try {
-      const parsed = JSON.parse(raw)
-      if (parsed && typeof parsed === 'object') {
-        return { clave, datos: parsed }
-      }
-    } catch {
-      // ignorar JSON inválido
-    }
+function aFormulario(perfil, base = PERFIL_VACIO) {
+  return {
+    nombre: perfil?.nombre ?? base.nombre,
+    apellido: perfil?.apellido ?? base.apellido,
+    correo: perfil?.correo ?? base.correo,
+    telefono: perfil?.telefono ?? base.telefono,
   }
-  return { clave: 'usuario', datos: {} }
 }
 
 function Perfil() {
-  const [storageMeta] = useState(() => leerUsuarioStorage())
-  const [form, setForm] = useState({
-    nombre: storageMeta.datos.nombre || '',
-    apellido: storageMeta.datos.apellido || '',
-    correo: storageMeta.datos.correo || storageMeta.datos.email || '',
-    telefono: storageMeta.datos.telefono || '',
-  })
+  const [form, setForm] = useState(PERFIL_VACIO)
+  const [perfilOriginal, setPerfilOriginal] = useState(PERFIL_VACIO)
+  const [cargando, setCargando] = useState(true)
   const [guardando, setGuardando] = useState(false)
   const [mensajeExito, setMensajeExito] = useState('')
   const [mensajeError, setMensajeError] = useState('')
 
   useEffect(() => {
-    setForm({
-      nombre: storageMeta.datos.nombre || '',
-      apellido: storageMeta.datos.apellido || '',
-      correo: storageMeta.datos.correo || storageMeta.datos.email || '',
-      telefono: storageMeta.datos.telefono || '',
-    })
-  }, [storageMeta])
+    let activo = true
+
+    async function cargarPerfil() {
+      try {
+        const perfil = await obtenerPerfil()
+        if (!activo) return
+        const datos = aFormulario(perfil)
+        setForm(datos)
+        setPerfilOriginal(datos)
+      } catch (error) {
+        if (activo) {
+          setMensajeError(
+            error.message || 'No se pudieron cargar los datos del perfil.',
+          )
+        }
+      } finally {
+        if (activo) setCargando(false)
+      }
+    }
+
+    cargarPerfil()
+
+    return () => {
+      activo = false
+    }
+  }, [])
+
+  const hayCambios = CAMPOS.some(
+    (campo) => form[campo].trim() !== perfilOriginal[campo].trim(),
+  )
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -110,18 +129,9 @@ function Perfil() {
       const actualizado = await modificarPerfil(payload)
 
       if (actualizado && typeof actualizado === 'object') {
-        setForm({
-          nombre: actualizado.nombre ?? form.nombre,
-          apellido: actualizado.apellido ?? form.apellido,
-          correo: actualizado.correo ?? form.correo,
-          telefono: actualizado.telefono ?? form.telefono,
-        })
-        if (localStorage.getItem(storageMeta.clave)) {
-          localStorage.setItem(
-            storageMeta.clave,
-            JSON.stringify({ ...storageMeta.datos, ...actualizado }),
-          )
-        }
+        const datos = aFormulario(actualizado, perfilOriginal)
+        setForm(datos)
+        setPerfilOriginal(datos)
       }
 
       setMensajeExito(
@@ -150,6 +160,9 @@ function Perfil() {
           <CardContent>
             <Box component="form" onSubmit={handleSubmit} noValidate>
               <Stack spacing={2.5}>
+                {cargando && (
+                  <Alert severity="info">Cargando datos del perfil…</Alert>
+                )}
                 {mensajeExito && <Alert severity="success">{mensajeExito}</Alert>}
                 {mensajeError && <Alert severity="error">{mensajeError}</Alert>}
 
@@ -158,6 +171,7 @@ function Perfil() {
                   name="nombre"
                   value={form.nombre}
                   onChange={handleChange}
+                  disabled={cargando || guardando}
                   slotProps={{ htmlInput: { maxLength: 60 } }}
                   fullWidth
                 />
@@ -167,6 +181,7 @@ function Perfil() {
                   name="apellido"
                   value={form.apellido}
                   onChange={handleChange}
+                  disabled={cargando || guardando}
                   slotProps={{ htmlInput: { maxLength: 60 } }}
                   fullWidth
                 />
@@ -177,6 +192,7 @@ function Perfil() {
                   type="email"
                   value={form.correo}
                   onChange={handleChange}
+                  disabled={cargando || guardando}
                   slotProps={{ htmlInput: { maxLength: 100 } }}
                   fullWidth
                 />
@@ -186,6 +202,7 @@ function Perfil() {
                   name="telefono"
                   value={form.telefono}
                   onChange={handleChange}
+                  disabled={cargando || guardando}
                   slotProps={{ htmlInput: { maxLength: 20 } }}
                   fullWidth
                 />
@@ -202,7 +219,7 @@ function Perfil() {
                   <Button
                     type="submit"
                     variant="contained"
-                    disabled={guardando}
+                    disabled={guardando || cargando || !hayCambios}
                   >
                     {guardando ? 'Guardando…' : 'Guardar cambios'}
                   </Button>

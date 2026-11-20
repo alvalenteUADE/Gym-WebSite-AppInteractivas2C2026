@@ -152,6 +152,39 @@ exports.restablecerPassword = async function (req, res) {
     }
 };
 
+exports.obtenerPerfil = async function (req, res) {
+    try {
+        const id = req.usuario && req.usuario.id;
+
+        if (!id) {
+            return res.status(401).json({
+                status: 401,
+                message: "No autorizado. Token inválido o ausente."
+            });
+        }
+
+        const resultado = await UserService.obtenerPerfil(id);
+
+        return res.status(200).json({
+            status: 200,
+            data: resultado,
+            message: "Datos del perfil obtenidos exitosamente"
+        });
+    } catch (e) {
+        if (e.message === 'No se encontró el administrador con ese ID') {
+            return res.status(404).json({
+                status: 404,
+                message: e.message
+            });
+        }
+
+        return res.status(400).json({
+            status: 400,
+            message: e.message
+        });
+    }
+};
+
 exports.modificarAdmin = async function (req, res) {
     try {
         const id = req.usuario && req.usuario.id;

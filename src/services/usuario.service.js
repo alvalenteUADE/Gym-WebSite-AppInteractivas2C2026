@@ -31,6 +31,16 @@ export async function contarClientes() {
   return data.data?.total ?? 0
 }
 
+export async function obtenerPerfil() {
+  const response = await fetch(`${API_URL}/user/profile`, {
+    headers: cabecerasAutenticadas(),
+  })
+
+  const data = await procesarRespuesta(response)
+
+  return data.data
+}
+
 export async function modificarPerfil(datosPerfil) {
   const response = await fetch(`${API_URL}/user/profile`, {
     method: 'PUT',
