@@ -86,6 +86,26 @@
   gap: 8px;
 }
 
+.consulta-detalle__confirmacion {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.consulta-detalle__confirmacion-texto {
+  margin: 0;
+  color: var(--color-text, #55615b);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.consulta-detalle__confirmacion-correo {
+  color: var(--color-ink, #14201a);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
 .consulta-detalle__footer {
   gap: 8px;
   padding: 16px 24px 20px;
