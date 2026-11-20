@@ -25,8 +25,13 @@ const institucion = require('./data/institucion');
 const categorias = require('./data/categorias');
 const publicaciones = require('./data/publicaciones');
 
-// URI de conexión a MongoDB (Sincronizada con MONGODB_URI de tu .env)
-const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.DB_URI || "mongodb+srv://alvalenteuade_db_user:Password01@cluster0.qkuw4vx.mongodb.net/gym";
+// URI de conexión a MongoDB leída exclusivamente desde el archivo .env
+const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.DB_URI;
+
+if (!MONGO_URI) {
+    console.error('\n[ERROR] No se encontró la variable de entorno MONGODB_URI (ni MONGO_URI / DB_URI) en el archivo .env\n');
+    process.exit(1);
+}
 
 // ---------- Helpers de log ----------
 const log = {
@@ -117,7 +122,11 @@ async function cargarUsuarios() {
             throw new Error('No se encontró al usuario administrador en la base de datos.');
         }
 
-        const secretKey = process.env.JWT_SECRET || process.env.SECRET_KEY || 'secreto_super_seguro';
+        const secretKey = process.env.JWT_SECRET || process.env.SECRET_KEY;
+        if (!secretKey) {
+            throw new Error('No se encontró JWT_SECRET (ni SECRET_KEY) en el archivo .env');
+        }
+
         token = jwt.sign(
             { id: adminUser._id, rol: adminUser.rol, correo: adminUser.correo },
             secretKey,
