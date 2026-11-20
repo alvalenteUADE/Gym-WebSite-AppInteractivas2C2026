@@ -10,6 +10,9 @@ import { Link } from 'react-router-dom'
 import Section from '../../components/layout/Section'
 import { modificarPerfil } from '../../services/usuario.service'
 
+const NOMBRE_REGEX = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]+$/
+const TELEFONO_REGEX = /^\+?[0-9\s()-]+$/
+
 function leerUsuarioStorage() {
   for (const clave of ['usuario', 'user', 'admin']) {
     const raw = localStorage.getItem(clave)
@@ -63,9 +66,37 @@ function Perfil() {
     const correoLimpio = form.correo.trim()
     const telefonoLimpio = form.telefono.trim()
 
-    if (nombreLimpio) payload.nombre = nombreLimpio
-    if (apellidoLimpio) payload.apellido = apellidoLimpio
-    if (telefonoLimpio) payload.telefono = telefonoLimpio
+    if (nombreLimpio) {
+      if (!NOMBRE_REGEX.test(nombreLimpio)) {
+        setMensajeError('El nombre solo puede contener letras y espacios.')
+        return
+      }
+      payload.nombre = nombreLimpio
+    }
+
+    if (apellidoLimpio) {
+      if (!NOMBRE_REGEX.test(apellidoLimpio)) {
+        setMensajeError('El apellido solo puede contener letras y espacios.')
+        return
+      }
+      payload.apellido = apellidoLimpio
+    }
+
+    if (telefonoLimpio) {
+      const soloDigitos = telefonoLimpio.replace(/\D/g, '')
+      if (
+        !TELEFONO_REGEX.test(telefonoLimpio) ||
+        soloDigitos.length < 8 ||
+        soloDigitos.length > 15
+      ) {
+        setMensajeError(
+          'El teléfono no es válido. Ingresá entre 8 y 15 dígitos.',
+        )
+        return
+      }
+      payload.telefono = telefonoLimpio
+    }
+
     if (correoLimpio) payload.correo = correoLimpio
 
     if (Object.keys(payload).length === 0) {
@@ -127,6 +158,7 @@ function Perfil() {
                   name="nombre"
                   value={form.nombre}
                   onChange={handleChange}
+                  slotProps={{ htmlInput: { maxLength: 60 } }}
                   fullWidth
                 />
 
@@ -135,6 +167,7 @@ function Perfil() {
                   name="apellido"
                   value={form.apellido}
                   onChange={handleChange}
+                  slotProps={{ htmlInput: { maxLength: 60 } }}
                   fullWidth
                 />
 
@@ -144,6 +177,7 @@ function Perfil() {
                   type="email"
                   value={form.correo}
                   onChange={handleChange}
+                  slotProps={{ htmlInput: { maxLength: 100 } }}
                   fullWidth
                 />
 
@@ -152,6 +186,7 @@ function Perfil() {
                   name="telefono"
                   value={form.telefono}
                   onChange={handleChange}
+                  slotProps={{ htmlInput: { maxLength: 20 } }}
                   fullWidth
                 />
 
