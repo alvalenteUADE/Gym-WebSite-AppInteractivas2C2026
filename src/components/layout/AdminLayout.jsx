@@ -300,14 +300,6 @@ function AdminLayout() {
           <Outlet />
         </main>
 
-        {/* Footer dinámico sincronizado con la base de datos (sin sección de gestión admin) */}
-        <Footer
-          logo={logo}
-          brandName={nombreGym}
-          description={descripcionGym}
-          columns={footerColumns}
-          bottomNote={`${nombreGym} · ${direccionGym}`}
-        />
       </div>
     </ThemeProvider>
   )
